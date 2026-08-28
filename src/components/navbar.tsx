@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { clsx } from "clsx";
-import { Rocket } from "lucide-react";
+import { Waves } from "lucide-react";
 import { CommandPaletteTrigger } from "@/components/command-palette";
 
 const links = [
@@ -40,10 +40,10 @@ export function Navbar() {
           className="group flex items-center gap-2 text-sm font-semibold tracking-tight"
         >
           <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/15 text-primary transition-colors group-hover:bg-primary/25">
-            <Rocket className="h-4 w-4" />
+            <Waves className="h-4 w-4" />
           </span>
-          <span className="text-white">Liam</span>
-          <span className="text-muted">&nbsp;Thompson</span>
+          <span className="text-white">Low Tide</span>
+          <span className="text-muted">&nbsp;Lab</span>
         </Link>
 
         <div className="flex items-center gap-2 sm:gap-4">

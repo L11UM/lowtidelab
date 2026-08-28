@@ -1,5 +1,5 @@
 /** @type {import('next').NextConfig} */
-const repoName = "newportFOLIO";
+const repoName = "lowtidelab";
 const isGithubActions = process.env.GITHUB_ACTIONS === "true";
 
 const nextConfig = {

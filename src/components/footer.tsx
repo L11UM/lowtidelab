@@ -5,7 +5,7 @@ const socials = [
   { href: "https://github.com", label: "GitHub", icon: Github },
   { href: "https://linkedin.com", label: "LinkedIn", icon: Linkedin },
   { href: "https://twitter.com", label: "Twitter", icon: Twitter },
-  { href: "mailto:hello@example.com", label: "Email", icon: Mail },
+  { href: "mailto:hello@lowtidelab.dev", label: "Email", icon: Mail },
 ];
 
 export function Footer() {
@@ -13,7 +13,7 @@ export function Footer() {
     <footer className="border-t border-border/60">
       <div className="container-x flex flex-col items-center justify-between gap-6 py-10 sm:flex-row">
         <div className="text-center text-sm text-muted sm:text-left">
-          <p>&copy; {new Date().getFullYear()} Liam Thompson. Built with Next.js &amp; Tailwind.</p>
+          <p>&copy; {new Date().getFullYear()} Low Tide Lab. Built with Next.js &amp; Tailwind.</p>
         </div>
 
         <div className="flex items-center gap-2">
@@ -37,6 +37,9 @@ export function Footer() {
           </Link>
           <Link href="/lab" className="hover:text-white">
             Lab
+          </Link>
+          <Link href="/blog" className="hover:text-white">
+            Blog
           </Link>
           <Link href="/about" className="hover:text-white">
             About

@@ -10,6 +10,6 @@ export const monetization = {
   stripeMembershipLink: "https://buy.stripe.com/YOUR_MEMBERSHIP_LINK",
 
   // Optional fallback/alternate support links.
-  koFiUrl: "https://ko-fi.com/yourname",
-  githubSponsorsUrl: "https://github.com/sponsors/yourname",
+  koFiUrl: "https://ko-fi.com/lowtidelab",
+  githubSponsorsUrl: "https://github.com/sponsors/lowtidelab",
 };

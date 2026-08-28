@@ -23,7 +23,7 @@ export const projects: Project[] = [
     slug: "example-project",
     title: "Example Project",
     description:
-      "A placeholder project to show how new work gets added to this portfolio. Swap this out for your next creation — the card layout scales automatically.",
+      "A placeholder project to show how new work gets added to the Lab. Swap this out for your next creation — the card layout scales automatically.",
     tags: ["Web", "Design"],
     liveUrl: "#",
   },

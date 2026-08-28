@@ -1,6 +1,6 @@
-# Personal Portfolio
+# Low Tide Lab
 
-A modern personal portfolio built with Next.js 14 (App Router), TypeScript, Tailwind CSS, and Framer Motion. Includes a home page, projects grid, an "Idea Lab" page, an about page, and an interactive RocketGPT chat demo.
+Home base for Low Tide Lab — built with Next.js 14 (App Router), TypeScript, Tailwind CSS, and Framer Motion. Includes a home page, projects grid, an "Idea Lab" page, a daily AI-written blog, an about page, and an interactive RocketGPT chat demo.
 
 ## Getting started
 

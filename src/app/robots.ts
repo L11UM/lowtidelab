@@ -6,6 +6,6 @@ export default function robots(): MetadataRoute.Robots {
       userAgent: "*",
       allow: "/",
     },
-    sitemap: "https://liamthompson.dev/sitemap.xml",
+    sitemap: "https://lowtidelab.dev/sitemap.xml",
   };
 }

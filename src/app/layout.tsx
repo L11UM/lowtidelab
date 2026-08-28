@@ -18,32 +18,32 @@ const jetbrainsMono = JetBrains_Mono({
   display: "swap",
 });
 
-const siteUrl = "https://liamthompson.dev";
+const siteUrl = "https://lowtidelab.dev";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "Liam Thompson — Builder & AI Tinkerer",
-    template: "%s — Liam Thompson",
+    default: "Low Tide Lab — Ideas, Experiments & RocketGPT",
+    template: "%s — Low Tide Lab",
   },
   description:
-    "Personal site of Liam Thompson — ideas, projects, and experiments, including RocketGPT, an AI chatbot.",
-  keywords: ["portfolio", "RocketGPT", "AI chatbot", "software engineer", "Next.js"],
-  authors: [{ name: "Liam Thompson" }],
-  creator: "Liam Thompson",
+    "Low Tide Lab is a home base for ideas, experiments, and builds — including RocketGPT, an AI chatbot, and a daily AI-written blog.",
+  keywords: ["Low Tide Lab", "RocketGPT", "AI chatbot", "lab", "experiments", "Next.js"],
+  authors: [{ name: "Low Tide Lab" }],
+  creator: "Low Tide Lab",
   openGraph: {
     type: "website",
     url: siteUrl,
-    title: "Liam Thompson — Builder & AI Tinkerer",
+    title: "Low Tide Lab — Ideas, Experiments & RocketGPT",
     description:
-      "Personal site of Liam Thompson — ideas, projects, and experiments, including RocketGPT, an AI chatbot.",
-    siteName: "Liam Thompson",
+      "Low Tide Lab is a home base for ideas, experiments, and builds — including RocketGPT, an AI chatbot, and a daily AI-written blog.",
+    siteName: "Low Tide Lab",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Liam Thompson — Builder & AI Tinkerer",
+    title: "Low Tide Lab — Ideas, Experiments & RocketGPT",
     description:
-      "Personal site of Liam Thompson — ideas, projects, and experiments, including RocketGPT, an AI chatbot.",
+      "Low Tide Lab is a home base for ideas, experiments, and builds — including RocketGPT, an AI chatbot, and a daily AI-written blog.",
   },
   robots: {
     index: true,

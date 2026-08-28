@@ -34,18 +34,17 @@ function Hero() {
 
       <Reveal delay={0.1}>
         <h1 className="max-w-3xl text-4xl font-semibold leading-[1.1] tracking-tight sm:text-6xl">
-          I build ideas into{" "}
-          <span className="text-gradient">things that work.</span>
+          Low tide is when{" "}
+          <span className="text-gradient">the interesting stuff surfaces.</span>
         </h1>
       </Reveal>
 
       <Reveal delay={0.2}>
         <p className="mt-6 max-w-xl text-lg text-muted">
-          I&apos;m a developer who ships. This site is a living log of my
-          projects, half-formed ideas, and the occasional AI experiment —
-          starting with{" "}
-          <span className="font-medium text-white">RocketGPT</span>, my own
-          chatbot.
+          Low Tide Lab is a home base for ideas, experiments, and things worth
+          building — including{" "}
+          <span className="font-medium text-white">RocketGPT</span>, an AI
+          chatbot, and a blog written entirely by AI, one day at a time.
         </p>
       </Reveal>
 
@@ -59,10 +58,10 @@ function Hero() {
             <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
           </Link>
           <Link
-            href="/about"
+            href="/lab"
             className="inline-flex items-center gap-2 rounded-full border border-border px-6 py-3 text-sm font-semibold text-white/90 transition-colors hover:border-white/30 hover:bg-white/5"
           >
-            About Me
+            Explore the Lab
           </Link>
         </div>
       </Reveal>
@@ -123,10 +122,9 @@ function RocketGPTSection() {
             Meet <span className="text-gradient">RocketGPT</span>
           </h2>
           <p className="mt-4 max-w-md text-muted">
-            A fast, focused AI chatbot I&apos;m building from scratch.
-            Try the interactive demo below — it&apos;s a placeholder UI
-            wired up to simulate real responses until the live model is
-            connected.
+            A fast, focused AI chatbot built in the Lab from scratch. Try
+            the interactive demo below — it&apos;s a placeholder UI wired
+            up to simulate real responses until the live model is connected.
           </p>
           <Link
             href="/projects"

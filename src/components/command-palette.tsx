@@ -61,7 +61,7 @@ export function CommandPalette() {
         label: "Send an email",
         hint: "opens mail client",
         icon: Mail,
-        action: () => window.open("mailto:hello@liamthompson.dev", "_self"),
+        action: () => window.open("mailto:hello@lowtidelab.dev", "_self"),
       },
       {
         id: "github",
@@ -71,8 +71,8 @@ export function CommandPalette() {
       },
       {
         id: "support",
-        label: "Support this project",
-        hint: "buy me a coffee",
+        label: "Support the Lab",
+        hint: "buy us a coffee",
         icon: Heart,
         action: () => window.open(monetization.stripeTipLink, "_blank", "noreferrer"),
         keywords: "tip donate coffee sponsor",
