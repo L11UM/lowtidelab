@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { clsx } from "clsx";
 import { Rocket } from "lucide-react";
+import { CommandPaletteTrigger } from "@/components/command-palette";
 
 const links = [
   { href: "/", label: "Home" },
@@ -44,7 +45,8 @@ export function Navbar() {
           <span className="text-muted">&nbsp;Thompson</span>
         </Link>
 
-        <ul className="flex items-center gap-1 sm:gap-2">
+        <div className="flex items-center gap-2 sm:gap-4">
+          <ul className="flex items-center gap-1 sm:gap-2">
           {links.map((link) => {
             const active =
               link.href === "/" ? pathname === "/" : pathname?.startsWith(link.href);
@@ -69,7 +71,10 @@ export function Navbar() {
               </li>
             );
           })}
-        </ul>
+          </ul>
+
+          <CommandPaletteTrigger />
+        </div>
       </nav>
     </header>
   );

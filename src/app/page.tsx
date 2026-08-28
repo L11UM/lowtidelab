@@ -66,6 +66,16 @@ function Hero() {
           </Link>
         </div>
       </Reveal>
+
+      <Reveal delay={0.4}>
+        <p className="mt-8 hidden items-center gap-2 text-xs text-muted sm:flex">
+          Tip: press
+          <kbd className="rounded border border-border bg-surface2 px-1.5 py-0.5 font-mono text-[11px] text-white/80">
+            ⌘K
+          </kbd>
+          to jump anywhere on this site
+        </p>
+      </Reveal>
     </section>
   );
 }
