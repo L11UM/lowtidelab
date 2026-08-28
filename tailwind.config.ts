@@ -10,20 +10,20 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        background: "#08090c",
-        surface: "#0f1116",
-        surface2: "#15171f",
-        border: "#22242e",
+        background: "#0b1416",
+        surface: "#101c1e",
+        surface2: "#162527",
+        border: "#233335",
         primary: {
-          DEFAULT: "#7c5cff",
-          light: "#a78bfa",
-          dark: "#5b3df0",
+          DEFAULT: "#5fa8a0",
+          light: "#8fc9c1",
+          dark: "#437f78",
         },
         accent: {
-          DEFAULT: "#00e5b0",
-          light: "#5ffbd7",
+          DEFAULT: "#d9ab72",
+          light: "#e8c39a",
         },
-        muted: "#8b8fa3",
+        muted: "#8fa19d",
       },
       fontFamily: {
         sans: ["var(--font-sans)", "sans-serif"],
@@ -31,7 +31,7 @@ const config: Config = {
       },
       backgroundImage: {
         "radial-fade":
-          "radial-gradient(circle at 50% 0%, rgba(124,92,255,0.25), transparent 60%)",
+          "radial-gradient(circle at 50% 0%, rgba(95,168,160,0.16), transparent 60%)",
       },
       animation: {
         "fade-in": "fadeIn 0.6s ease-out forwards",
@@ -54,8 +54,8 @@ const config: Config = {
         },
       },
       boxShadow: {
-        glow: "0 0 40px rgba(124,92,255,0.35)",
-        "glow-sm": "0 0 20px rgba(124,92,255,0.25)",
+        glow: "0 0 32px rgba(95,168,160,0.2)",
+        "glow-sm": "0 0 16px rgba(95,168,160,0.15)",
       },
     },
   },

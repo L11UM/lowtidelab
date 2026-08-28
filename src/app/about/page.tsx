@@ -35,7 +35,7 @@ export default function AboutPage() {
       <Reveal>
         <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">About Me</h1>
         <p className="mt-6 max-w-2xl text-lg leading-relaxed text-muted">
-          Hey, I&apos;m yourname — a developer who likes turning ideas into
+          Hey, I&apos;m Liam Thompson — a developer who likes turning ideas into
           real, working things. This site is part portfolio, part lab
           notebook: a place to show finished projects and think out loud
           about what&apos;s next.

@@ -13,7 +13,7 @@ export function Footer() {
     <footer className="border-t border-border/60">
       <div className="container-x flex flex-col items-center justify-between gap-6 py-10 sm:flex-row">
         <div className="text-center text-sm text-muted sm:text-left">
-          <p>&copy; {new Date().getFullYear()} yourname. Built with Next.js &amp; Tailwind.</p>
+          <p>&copy; {new Date().getFullYear()} Liam Thompson. Built with Next.js &amp; Tailwind.</p>
         </div>
 
         <div className="flex items-center gap-2">

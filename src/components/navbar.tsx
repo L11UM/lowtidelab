@@ -40,8 +40,8 @@ export function Navbar() {
           <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/15 text-primary transition-colors group-hover:bg-primary/25">
             <Rocket className="h-4 w-4" />
           </span>
-          <span className="text-white">yourname</span>
-          <span className="text-muted">.dev</span>
+          <span className="text-white">Liam</span>
+          <span className="text-muted">&nbsp;Thompson</span>
         </Link>
 
         <ul className="flex items-center gap-1 sm:gap-2">

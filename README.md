@@ -77,7 +77,7 @@ Both components are already placed on the home page (below the RocketGPT demo) a
 
 - Update site name, socials, and metadata (`src/app/layout.tsx`, `src/components/navbar.tsx`, `src/components/footer.tsx`).
 - Colors and theme live in `tailwind.config.ts`.
-- Replace `https://yourname.dev` in `layout.tsx`, `sitemap.ts`, and `robots.ts` with your real domain.
+- Replace `https://liamthompson.dev` in `layout.tsx`, `sitemap.ts`, and `robots.ts` with your real domain.
 
 ## Deploying to GitHub Pages
 

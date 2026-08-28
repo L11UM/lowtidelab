@@ -16,32 +16,32 @@ const jetbrainsMono = JetBrains_Mono({
   display: "swap",
 });
 
-const siteUrl = "https://yourname.dev";
+const siteUrl = "https://liamthompson.dev";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "yourname — Builder & AI Tinkerer",
-    template: "%s — yourname",
+    default: "Liam Thompson — Builder & AI Tinkerer",
+    template: "%s — Liam Thompson",
   },
   description:
-    "Personal site of yourname — ideas, projects, and experiments, including RocketGPT, an AI chatbot.",
+    "Personal site of Liam Thompson — ideas, projects, and experiments, including RocketGPT, an AI chatbot.",
   keywords: ["portfolio", "RocketGPT", "AI chatbot", "software engineer", "Next.js"],
-  authors: [{ name: "yourname" }],
-  creator: "yourname",
+  authors: [{ name: "Liam Thompson" }],
+  creator: "Liam Thompson",
   openGraph: {
     type: "website",
     url: siteUrl,
-    title: "yourname — Builder & AI Tinkerer",
+    title: "Liam Thompson — Builder & AI Tinkerer",
     description:
-      "Personal site of yourname — ideas, projects, and experiments, including RocketGPT, an AI chatbot.",
-    siteName: "yourname",
+      "Personal site of Liam Thompson — ideas, projects, and experiments, including RocketGPT, an AI chatbot.",
+    siteName: "Liam Thompson",
   },
   twitter: {
     card: "summary_large_image",
-    title: "yourname — Builder & AI Tinkerer",
+    title: "Liam Thompson — Builder & AI Tinkerer",
     description:
-      "Personal site of yourname — ideas, projects, and experiments, including RocketGPT, an AI chatbot.",
+      "Personal site of Liam Thompson — ideas, projects, and experiments, including RocketGPT, an AI chatbot.",
   },
   robots: {
     index: true,
