@@ -82,6 +82,26 @@ async function withRetries(fn, { attempts = 3, baseDelayMs = 2000 } = {}) {
 // Fallback chain in case the primary model is overloaded or renamed/deprecated.
 const GEMINI_MODEL_FALLBACKS = [GEMINI_MODEL, "gemini-2.0-flash", "gemini-1.5-flash"];
 
+async function discoverGeminiModel() {
+  const url = `https://generativelanguage.googleapis.com/v1beta/models?key=${GEMINI_API_KEY}`;
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`ListModels failed: ${res.status} ${await res.text()}`);
+
+  const data = await res.json();
+  const candidates = (data.models || []).filter(
+    (m) =>
+      m.supportedGenerationMethods?.includes("generateContent") &&
+      !/vision|embedding|aqa|tts|image/i.test(m.name)
+  );
+
+  // Prefer a "flash" model (cheaper/faster) over "pro".
+  const flash = candidates.find((m) => /flash/i.test(m.name));
+  const chosen = flash || candidates[0];
+  if (!chosen) throw new Error("No usable Gemini model found via ListModels");
+
+  return chosen.name.replace(/^models\//, "");
+}
+
 async function callGemini(model, topicHint) {
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${GEMINI_API_KEY}`;
 
@@ -117,14 +137,30 @@ async function generateWithGemini(topicHint) {
   if (!GEMINI_API_KEY) throw new Error("Missing GEMINI_API_KEY (or AI_API_KEY).");
 
   let lastErr;
+  let sawNotFound = false;
+
   for (const model of GEMINI_MODEL_FALLBACKS) {
     try {
       return await withRetries(() => callGemini(model, topicHint));
     } catch (err) {
       lastErr = err;
+      if (/\b404\b/.test(err.message)) sawNotFound = true;
       console.log(`Model "${model}" failed after retries: ${err.message.slice(0, 120)}`);
     }
   }
+
+  // If the hardcoded names are stale, ask Google which models actually exist right now.
+  if (sawNotFound) {
+    try {
+      const discovered = await discoverGeminiModel();
+      console.log(`Discovered fallback model via ListModels: ${discovered}`);
+      return await withRetries(() => callGemini(discovered, topicHint));
+    } catch (err) {
+      lastErr = err;
+      console.log(`Discovered model also failed: ${err.message.slice(0, 120)}`);
+    }
+  }
+
   throw lastErr;
 }
 
