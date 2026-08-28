@@ -9,7 +9,9 @@ const POSTS_DIR = path.join(process.cwd(), "content", "posts");
 // PROVIDER: "gemini" (default) or "openai".
 const PROVIDER = (process.env.AI_PROVIDER || "gemini").toLowerCase();
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY || process.env.AI_API_KEY;
-const GEMINI_MODEL = process.env.AI_MODEL || "gemini-1.5-flash";
+// "gemini-flash-latest" is Google's rolling alias for their current flash model,
+// so this doesn't need updating every time a dated model version is deprecated.
+const GEMINI_MODEL = process.env.AI_MODEL || "gemini-flash-latest";
 
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY || process.env.AI_API_KEY;
 const OPENAI_API_URL = process.env.AI_API_URL || "https://api.openai.com/v1/chat/completions";
