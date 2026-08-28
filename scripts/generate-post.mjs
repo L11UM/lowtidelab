@@ -16,21 +16,32 @@ const OPENAI_API_URL = process.env.AI_API_URL || "https://api.openai.com/v1/chat
 const OPENAI_MODEL = process.env.AI_MODEL || "gpt-4o-mini";
 
 const TOPICS = [
-  "a small but clever pattern in modern web development",
-  "an underrated feature of a popular AI coding tool",
-  "a lesson learned from shipping a side project",
-  "a simple idea that makes developer tools feel delightful",
-  "something surprising about how large language models behave",
-  "a tiny productivity habit for solo developers",
-  "an argument for or against a common engineering trend",
+  "technology or software",
+  "science or a scientific curiosity",
+  "history or a historical event",
+  "psychology or human behavior",
+  "culture, media, or the internet",
+  "nature or the environment",
+  "food or cooking",
+  "travel or a place in the world",
+  "art, music, or creativity",
+  "sports or games",
+  "philosophy or a big question",
+  "everyday life or a small personal observation",
+  "business or economics",
+  "health or fitness",
+  "space or astronomy",
 ];
 
-const SYSTEM_PROMPT = `You are writing a short, genuinely interesting blog post for a personal developer portfolio site with a chill, unpretentious voice. The post is part of a public experiment testing whether AI can write a good blog post every day, fully unedited before publishing.
+const SYSTEM_PROMPT = `You are writing a short, genuinely interesting blog post for a personal portfolio site with a chill, unpretentious voice. The post is part of a public experiment testing whether AI can write a good blog post every day, fully unedited before publishing.
+
+You can write about absolutely anything — you are not limited to tech or AI topics. Pick something genuinely interesting within the general area you're given, the way a curious, well-read person would pick a subject for a short essay.
 
 Rules:
 - 250-400 words.
 - No fluff, no "in conclusion", no generic AI disclaimers.
-- Write like a thoughtful developer sharing a real observation, not marketing copy.
+- Write like a thoughtful, curious person sharing a real observation or idea, not marketing copy or a Wikipedia summary.
+- Do not repeat topics or titles you've already covered (a list of recent post titles may be provided — pick something clearly different).
 - Return ONLY valid JSON (no markdown code fences) with keys: title (string, punchy, under 70 chars), excerpt (string, one sentence, under 140 chars), tags (array of 2-3 lowercase single words), body (string, markdown, no frontmatter, may use ## subheadings and lists).`;
 
 function todaySlugDate() {
@@ -48,6 +59,22 @@ function slugify(title) {
 function alreadyPostedToday(dateStr) {
   if (!fs.existsSync(POSTS_DIR)) return false;
   return fs.readdirSync(POSTS_DIR).some((f) => f.startsWith(dateStr));
+}
+
+function getRecentTitles(limit = 15) {
+  if (!fs.existsSync(POSTS_DIR)) return [];
+  return fs
+    .readdirSync(POSTS_DIR)
+    .filter((f) => f.endsWith(".md"))
+    .sort()
+    .reverse()
+    .slice(0, limit)
+    .map((f) => {
+      const raw = fs.readFileSync(path.join(POSTS_DIR, f), "utf8");
+      const match = raw.match(/^title:\s*"(.*)"\s*$/m);
+      return match ? match[1] : null;
+    })
+    .filter(Boolean);
 }
 
 function extractJson(raw) {
@@ -100,7 +127,7 @@ async function discoverGeminiModel() {
   return chosen.name.replace(/^models\//, "");
 }
 
-async function callGemini(model, topicHint) {
+async function callGemini(model, userPrompt) {
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${GEMINI_API_KEY}`;
 
   const res = await fetch(url, {
@@ -110,11 +137,11 @@ async function callGemini(model, topicHint) {
       contents: [
         {
           role: "user",
-          parts: [{ text: `${SYSTEM_PROMPT}\n\nWrite today's post about: ${topicHint}` }],
+          parts: [{ text: `${SYSTEM_PROMPT}\n\n${userPrompt}` }],
         },
       ],
       generationConfig: {
-        temperature: 0.8,
+        temperature: 0.9,
         responseMimeType: "application/json",
       },
     }),
@@ -131,7 +158,7 @@ async function callGemini(model, topicHint) {
   return extractJson(raw);
 }
 
-async function generateWithGemini(topicHint) {
+async function generateWithGemini(userPrompt) {
   if (!GEMINI_API_KEY) throw new Error("Missing GEMINI_API_KEY (or AI_API_KEY).");
 
   let lastErr;
@@ -139,7 +166,7 @@ async function generateWithGemini(topicHint) {
 
   for (const model of GEMINI_MODEL_FALLBACKS) {
     try {
-      return await withRetries(() => callGemini(model, topicHint));
+      return await withRetries(() => callGemini(model, userPrompt));
     } catch (err) {
       lastErr = err;
       if (/\b404\b/.test(err.message)) sawNotFound = true;
@@ -152,7 +179,7 @@ async function generateWithGemini(topicHint) {
     try {
       const discovered = await discoverGeminiModel();
       console.log(`Discovered fallback model via ListModels: ${discovered}`);
-      return await withRetries(() => callGemini(discovered, topicHint));
+      return await withRetries(() => callGemini(discovered, userPrompt));
     } catch (err) {
       lastErr = err;
       console.log(`Discovered model also failed: ${err.message.slice(0, 120)}`);
@@ -162,7 +189,7 @@ async function generateWithGemini(topicHint) {
   throw lastErr;
 }
 
-async function generateWithOpenAI(topicHint) {
+async function generateWithOpenAI(userPrompt) {
   if (!OPENAI_API_KEY) throw new Error("Missing OPENAI_API_KEY (or AI_API_KEY).");
 
   const res = await fetch(OPENAI_API_URL, {
@@ -175,9 +202,9 @@ async function generateWithOpenAI(topicHint) {
       model: OPENAI_MODEL,
       messages: [
         { role: "system", content: SYSTEM_PROMPT },
-        { role: "user", content: `Write today's post about: ${topicHint}` },
+        { role: "user", content: userPrompt },
       ],
-      temperature: 0.8,
+      temperature: 0.9,
       response_format: { type: "json_object" },
     }),
   });
@@ -193,8 +220,8 @@ async function generateWithOpenAI(topicHint) {
   return extractJson(raw);
 }
 
-async function generatePost(topicHint) {
-  return PROVIDER === "openai" ? generateWithOpenAI(topicHint) : generateWithGemini(topicHint);
+async function generatePost(userPrompt) {
+  return PROVIDER === "openai" ? generateWithOpenAI(userPrompt) : generateWithGemini(userPrompt);
 }
 
 async function main() {
@@ -215,7 +242,13 @@ async function main() {
   }
 
   const topic = TOPICS[Math.floor(Math.random() * TOPICS.length)];
-  const post = await generatePost(topic);
+  const recentTitles = getRecentTitles();
+  const avoidNote =
+    recentTitles.length > 0
+      ? `\n\nRecent post titles to avoid repeating (pick something clearly different): ${recentTitles.join("; ")}`
+      : "";
+  const userPrompt = `Write today's post. General area for inspiration: ${topic}. You don't have to stick strictly to this area — use it as a loose starting point and write about whatever genuinely interesting angle comes to mind.${avoidNote}`;
+  const post = await generatePost(userPrompt);
 
   const slug = `${dateStr}-${slugify(post.title)}`;
   const frontmatter = [

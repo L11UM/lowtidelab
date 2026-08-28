@@ -22,9 +22,10 @@ export default function BlogPage() {
         </span>
         <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">Blog</h1>
         <p className="mt-3 max-w-xl text-muted">
-          Short daily notes on AI, dev tools, and small ideas. Most of these are
-          drafted automatically by a scheduled bot — think of it as a public,
-          slightly chaotic idea journal.
+          Short daily posts on whatever the bot finds interesting that day — tech,
+          science, history, culture, or anything else. Most of these are drafted
+          automatically by a scheduled AI — think of it as a public, unpredictable
+          idea journal.
         </p>
       </Reveal>
 
