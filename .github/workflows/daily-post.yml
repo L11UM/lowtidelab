@@ -1,0 +1,40 @@
+name: Daily AI Blog Post
+
+on:
+  schedule:
+    # 14:00 UTC every day
+    - cron: "0 14 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Generate today's post
+        env:
+          AI_API_KEY: ${{ secrets.AI_API_KEY }}
+          AI_API_URL: ${{ vars.AI_API_URL }}
+          AI_MODEL: ${{ vars.AI_MODEL }}
+        run: node scripts/generate-post.mjs
+
+      - name: Commit and push new post
+        run: |
+          git config user.name "daily-post-bot"
+          git config user.email "daily-post-bot@users.noreply.github.com"
+          git add content/posts
+          git diff --cached --quiet && echo "No new post to commit." && exit 0
+          git commit -m "chore: daily AI blog post"
+          git push

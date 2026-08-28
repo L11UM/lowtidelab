@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "generate:post": "node scripts/generate-post.mjs"
   },
   "dependencies": {
     "next": "^14.2.32",
@@ -14,7 +15,9 @@
     "react-dom": "^18.3.1",
     "framer-motion": "^11.3.19",
     "lucide-react": "^0.408.0",
-    "clsx": "^2.1.1"
+    "clsx": "^2.1.1",
+    "gray-matter": "^4.0.3",
+    "marked": "^13.0.3"
   },
   "devDependencies": {
     "typescript": "^5.5.4",

@@ -22,6 +22,8 @@ src/
     page.tsx           Home page (hero, featured projects, RocketGPT demo)
     projects/page.tsx  Projects grid
     lab/page.tsx       Idea Lab page
+    blog/page.tsx       Blog index (daily AI-written posts)
+    blog/[slug]/page.tsx  Individual blog post
     about/page.tsx     About page
     sitemap.ts         Auto-generated sitemap
     robots.ts          Robots.txt config
@@ -31,9 +33,16 @@ src/
     footer.tsx          Footer with socials
     reveal.tsx          Scroll-triggered fade/slide animation wrapper
     project-card.tsx    Reusable project card
+    post-card.tsx       Blog post card
     chat-demo.tsx       Interactive RocketGPT chat demo (simulated)
   lib/
     data.ts             Projects & ideas data — edit this to add new work
+    posts.ts            Reads/parses markdown posts from content/posts
+    sanitize.ts         Strips unsafe HTML from AI-generated post content
+content/
+  posts/                Markdown blog posts (one file per day)
+scripts/
+  generate-post.mjs    Calls an AI API to write and save today's post
 ```
 
 ## Adding a new project
