@@ -5,6 +5,7 @@ import { ProjectCard } from "@/components/project-card";
 import { ChatDemo } from "@/components/chat-demo";
 import { WaitlistForm } from "@/components/waitlist-form";
 import { SupportCTA } from "@/components/support-cta";
+import { TideTracker } from "@/components/tide-tracker";
 import { projects, type Project } from "@/lib/data";
 
 export default function HomePage() {
@@ -25,56 +26,64 @@ export default function HomePage() {
 function Hero() {
   return (
     <section className="container-x flex min-h-[85vh] flex-col justify-center py-24">
-      <Reveal>
-        <span className="mb-6 inline-flex w-fit items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-4 py-1.5 text-xs font-medium text-primary-light">
-          <Sparkles className="h-3.5 w-3.5" />
-          Currently building RocketGPT
-        </span>
-      </Reveal>
+      <div className="grid items-center gap-12 lg:grid-cols-[1.1fr_0.9fr]">
+        <div>
+          <Reveal>
+            <span className="mb-6 inline-flex w-fit items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-4 py-1.5 text-xs font-medium text-primary-light">
+              <Sparkles className="h-3.5 w-3.5" />
+              Currently building RocketGPT
+            </span>
+          </Reveal>
 
-      <Reveal delay={0.1}>
-        <h1 className="max-w-3xl text-4xl font-semibold leading-[1.1] tracking-tight sm:text-6xl">
-          Low tide is when{" "}
-          <span className="text-gradient">the interesting stuff surfaces.</span>
-        </h1>
-      </Reveal>
+          <Reveal delay={0.1}>
+            <h1 className="max-w-3xl text-4xl font-semibold leading-[1.1] tracking-tight sm:text-6xl">
+              Low tide is when{" "}
+              <span className="text-gradient">the interesting stuff surfaces.</span>
+            </h1>
+          </Reveal>
 
-      <Reveal delay={0.2}>
-        <p className="mt-6 max-w-xl text-lg text-muted">
-          Low Tide Lab is a home base for ideas, experiments, and things worth
-          building — including{" "}
-          <span className="font-medium text-white">RocketGPT</span>, an AI
-          chatbot, and a blog written entirely by AI, one day at a time.
-        </p>
-      </Reveal>
+          <Reveal delay={0.2}>
+            <p className="mt-6 max-w-xl text-lg text-muted">
+              Low Tide Lab is a home base for ideas, experiments, and things worth
+              building — including{" "}
+              <span className="font-medium text-white">RocketGPT</span>, an AI
+              chatbot, and a blog written entirely by AI, one day at a time.
+            </p>
+          </Reveal>
 
-      <Reveal delay={0.3}>
-        <div className="mt-10 flex flex-wrap items-center gap-4">
-          <Link
-            href="/projects"
-            className="group inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-semibold text-white shadow-glow transition-transform hover:scale-[1.03] active:scale-[0.98]"
-          >
-            View Projects
-            <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-          </Link>
-          <Link
-            href="/lab"
-            className="inline-flex items-center gap-2 rounded-full border border-border px-6 py-3 text-sm font-semibold text-white/90 transition-colors hover:border-white/30 hover:bg-white/5"
-          >
-            Explore the Lab
-          </Link>
+          <Reveal delay={0.3}>
+            <div className="mt-10 flex flex-wrap items-center gap-4">
+              <Link
+                href="/projects"
+                className="group inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-semibold text-white shadow-glow transition-transform hover:scale-[1.03] active:scale-[0.98]"
+              >
+                View Projects
+                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+              </Link>
+              <Link
+                href="/lab"
+                className="inline-flex items-center gap-2 rounded-full border border-border px-6 py-3 text-sm font-semibold text-white/90 transition-colors hover:border-white/30 hover:bg-white/5"
+              >
+                Explore the Lab
+              </Link>
+            </div>
+          </Reveal>
+
+          <Reveal delay={0.4}>
+            <p className="mt-8 hidden items-center gap-2 text-xs text-muted sm:flex">
+              Tip: press
+              <kbd className="rounded border border-border bg-surface2 px-1.5 py-0.5 font-mono text-[11px] text-white/80">
+                ⌘K
+              </kbd>
+              to jump anywhere on this site
+            </p>
+          </Reveal>
         </div>
-      </Reveal>
 
-      <Reveal delay={0.4}>
-        <p className="mt-8 hidden items-center gap-2 text-xs text-muted sm:flex">
-          Tip: press
-          <kbd className="rounded border border-border bg-surface2 px-1.5 py-0.5 font-mono text-[11px] text-white/80">
-            ⌘K
-          </kbd>
-          to jump anywhere on this site
-        </p>
-      </Reveal>
+        <Reveal delay={0.25} className="flex justify-center lg:justify-end">
+          <TideTracker />
+        </Reveal>
+      </div>
     </section>
   );
 }
