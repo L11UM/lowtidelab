@@ -58,10 +58,32 @@ function extractJson(raw) {
   return JSON.parse(cleaned);
 }
 
-async function generateWithGemini(topicHint) {
-  if (!GEMINI_API_KEY) throw new Error("Missing GEMINI_API_KEY (or AI_API_KEY).");
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
 
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${GEMINI_API_KEY}`;
+async function withRetries(fn, { attempts = 3, baseDelayMs = 2000 } = {}) {
+  let lastErr;
+  for (let i = 0; i < attempts; i++) {
+    try {
+      return await fn();
+    } catch (err) {
+      lastErr = err;
+      const isRetryable = /\b(429|500|502|503|504)\b/.test(String(err.message));
+      if (!isRetryable || i === attempts - 1) throw err;
+      const delay = baseDelayMs * 2 ** i;
+      console.log(`Attempt ${i + 1} failed (${err.message.slice(0, 80)}...), retrying in ${delay}ms`);
+      await sleep(delay);
+    }
+  }
+  throw lastErr;
+}
+
+// Fallback chain in case the primary model is overloaded or renamed/deprecated.
+const GEMINI_MODEL_FALLBACKS = [GEMINI_MODEL, "gemini-2.0-flash", "gemini-1.5-flash"];
+
+async function callGemini(model, topicHint) {
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${GEMINI_API_KEY}`;
 
   const res = await fetch(url, {
     method: "POST",
@@ -89,6 +111,21 @@ async function generateWithGemini(topicHint) {
   if (!raw) throw new Error("Gemini API returned no content");
 
   return extractJson(raw);
+}
+
+async function generateWithGemini(topicHint) {
+  if (!GEMINI_API_KEY) throw new Error("Missing GEMINI_API_KEY (or AI_API_KEY).");
+
+  let lastErr;
+  for (const model of GEMINI_MODEL_FALLBACKS) {
+    try {
+      return await withRetries(() => callGemini(model, topicHint));
+    } catch (err) {
+      lastErr = err;
+      console.log(`Model "${model}" failed after retries: ${err.message.slice(0, 120)}`);
+    }
+  }
+  throw lastErr;
 }
 
 async function generateWithOpenAI(topicHint) {
