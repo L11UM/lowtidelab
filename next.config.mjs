@@ -1,7 +1,5 @@
 /** @type {import('next').NextConfig} */
-const repoName = "lowtidelab";
-const isGithubActions = process.env.GITHUB_ACTIONS === "true";
-
+// Served from a custom domain (lowtidelab.dev) at the root, so no basePath/assetPrefix needed.
 const nextConfig = {
   reactStrictMode: true,
   output: "export",
@@ -9,8 +7,6 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
-  basePath: isGithubActions ? `/${repoName}` : "",
-  assetPrefix: isGithubActions ? `/${repoName}/` : "",
 };
 
 export default nextConfig;
