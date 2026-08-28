@@ -3,6 +3,8 @@ import { ArrowRight, Sparkles } from "lucide-react";
 import { Reveal } from "@/components/reveal";
 import { ProjectCard } from "@/components/project-card";
 import { ChatDemo } from "@/components/chat-demo";
+import { WaitlistForm } from "@/components/waitlist-form";
+import { SupportCTA } from "@/components/support-cta";
 import { projects, type Project } from "@/lib/data";
 
 export default function HomePage() {
@@ -15,6 +17,7 @@ export default function HomePage() {
       <Hero />
       <FeaturedProjects projects={highlighted} />
       <RocketGPTSection />
+      <SupportSection />
     </>
   );
 }
@@ -121,12 +124,26 @@ function RocketGPTSection() {
           >
             Read more about the project <ArrowRight className="h-4 w-4" />
           </Link>
+
+          <div className="mt-8">
+            <WaitlistForm />
+          </div>
         </Reveal>
 
         <Reveal delay={0.15}>
           <ChatDemo />
         </Reveal>
       </div>
+    </section>
+  );
+}
+
+function SupportSection() {
+  return (
+    <section className="container-x py-16">
+      <Reveal>
+        <SupportCTA />
+      </Reveal>
     </section>
   );
 }

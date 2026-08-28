@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Reveal } from "@/components/reveal";
+import { SupportCTA } from "@/components/support-cta";
 import { Code2, Rocket, Sparkles } from "lucide-react";
 
 export const metadata: Metadata = {
@@ -59,6 +60,12 @@ export default function AboutPage() {
             </div>
           </Reveal>
         ))}
+      </div>
+
+      <div className="mt-16">
+        <Reveal>
+          <SupportCTA />
+        </Reveal>
       </div>
     </section>
   );

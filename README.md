@@ -59,6 +59,20 @@ Edit `src/lib/data.ts` and add an entry to the `projects` array:
 1. Create an API route (e.g. `src/app/api/chat/route.ts`) that proxies to your model/provider.
 2. Replace the `setTimeout` + canned-response logic in `handleSend` with a `fetch("/api/chat", ...)` call, ideally using a streaming response.
 
+## Monetization (no backend required)
+
+Since this site is statically exported, monetization is done via third-party hosted links/forms — no server needed. Everything is configured in one place: `src/lib/config.ts`.
+
+- **Waitlist / lead capture** (`src/components/waitlist-form.tsx`): collects emails for "RocketGPT Pro" early access.
+  1. Create a free form at [Formspree](https://formspree.io) (or similar).
+  2. Copy the form endpoint into `monetization.waitlistFormEndpoint` in `src/lib/config.ts`.
+- **Support / tips** (`src/components/support-cta.tsx`): "Buy me a coffee" and monthly membership buttons.
+  1. Create [Stripe Payment Links](https://dashboard.stripe.com/payment-links) for a one-time tip and a recurring membership (Payment Links are safe to use client-side — no secret keys involved).
+  2. Paste the links into `monetization.stripeTipLink` and `monetization.stripeMembershipLink`.
+  3. Optionally set `monetization.koFiUrl` / `monetization.githubSponsorsUrl` as alternates.
+
+Both components are already placed on the home page (below the RocketGPT demo) and the About page.
+
 ## Customization
 
 - Update site name, socials, and metadata (`src/app/layout.tsx`, `src/components/navbar.tsx`, `src/components/footer.tsx`).
