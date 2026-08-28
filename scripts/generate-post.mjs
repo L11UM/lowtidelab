@@ -1,14 +1,19 @@
 #!/usr/bin/env node
-// Generates one blog post per day using an OpenAI-compatible chat completion API,
-// writes it to content/posts/, and exits cleanly if a post for today already exists.
+// Generates one blog post per day using an AI provider (Gemini or any OpenAI-compatible
+// chat API), writes it to content/posts/, and skips if a post for today already exists.
 import fs from "node:fs";
 import path from "node:path";
 
 const POSTS_DIR = path.join(process.cwd(), "content", "posts");
 
-const API_KEY = process.env.AI_API_KEY;
-const API_URL = process.env.AI_API_URL || "https://api.openai.com/v1/chat/completions";
-const MODEL = process.env.AI_MODEL || "gpt-4o-mini";
+// PROVIDER: "gemini" (default) or "openai".
+const PROVIDER = (process.env.AI_PROVIDER || "gemini").toLowerCase();
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY || process.env.AI_API_KEY;
+const GEMINI_MODEL = process.env.AI_MODEL || "gemini-1.5-flash";
+
+const OPENAI_API_KEY = process.env.OPENAI_API_KEY || process.env.AI_API_KEY;
+const OPENAI_API_URL = process.env.AI_API_URL || "https://api.openai.com/v1/chat/completions";
+const OPENAI_MODEL = process.env.AI_MODEL || "gpt-4o-mini";
 
 const TOPICS = [
   "a small but clever pattern in modern web development",
@@ -19,6 +24,14 @@ const TOPICS = [
   "a tiny productivity habit for solo developers",
   "an argument for or against a common engineering trend",
 ];
+
+const SYSTEM_PROMPT = `You are writing a short, genuinely interesting blog post for a personal developer portfolio site with a chill, unpretentious voice. The post is part of a public experiment testing whether AI can write a good blog post every day, fully unedited before publishing.
+
+Rules:
+- 250-400 words.
+- No fluff, no "in conclusion", no generic AI disclaimers.
+- Write like a thoughtful developer sharing a real observation, not marketing copy.
+- Return ONLY valid JSON (no markdown code fences) with keys: title (string, punchy, under 70 chars), excerpt (string, one sentence, under 140 chars), tags (array of 2-3 lowercase single words), body (string, markdown, no frontmatter, may use ## subheadings and lists).`;
 
 function todaySlugDate() {
   return new Date().toISOString().slice(0, 10); // YYYY-MM-DD
@@ -37,28 +50,59 @@ function alreadyPostedToday(dateStr) {
   return fs.readdirSync(POSTS_DIR).some((f) => f.startsWith(dateStr));
 }
 
-async function generatePost(topicHint) {
-  const systemPrompt = `You are writing a short, genuinely interesting blog post for a personal developer portfolio site with a chill, unpretentious voice. The post is part of a public experiment testing whether AI can write a good blog post every day, fully unedited before publishing.
+function extractJson(raw) {
+  // Strip markdown code fences some models add despite instructions.
+  const cleaned = raw.trim().replace(/^```(json)?/i, "").replace(/```$/, "").trim();
+  return JSON.parse(cleaned);
+}
 
-Rules:
-- 250-400 words.
-- No fluff, no "in conclusion", no generic AI disclaimers.
-- Write like a thoughtful developer sharing a real observation, not marketing copy.
-- Return ONLY valid JSON with keys: title (string, punchy, under 70 chars), excerpt (string, one sentence, under 140 chars), tags (array of 2-3 lowercase single words), body (string, markdown, no frontmatter, may use ## subheadings and lists).`;
+async function generateWithGemini(topicHint) {
+  if (!GEMINI_API_KEY) throw new Error("Missing GEMINI_API_KEY (or AI_API_KEY).");
 
-  const userPrompt = `Write today's post about: ${topicHint}`;
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${GEMINI_API_KEY}`;
 
-  const res = await fetch(API_URL, {
+  const res = await fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      contents: [
+        {
+          role: "user",
+          parts: [{ text: `${SYSTEM_PROMPT}\n\nWrite today's post about: ${topicHint}` }],
+        },
+      ],
+      generationConfig: {
+        temperature: 0.8,
+        responseMimeType: "application/json",
+      },
+    }),
+  });
+
+  if (!res.ok) {
+    throw new Error(`Gemini API request failed: ${res.status} ${await res.text()}`);
+  }
+
+  const data = await res.json();
+  const raw = data.candidates?.[0]?.content?.parts?.[0]?.text;
+  if (!raw) throw new Error("Gemini API returned no content");
+
+  return extractJson(raw);
+}
+
+async function generateWithOpenAI(topicHint) {
+  if (!OPENAI_API_KEY) throw new Error("Missing OPENAI_API_KEY (or AI_API_KEY).");
+
+  const res = await fetch(OPENAI_API_URL, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${API_KEY}`,
+      Authorization: `Bearer ${OPENAI_API_KEY}`,
     },
     body: JSON.stringify({
-      model: MODEL,
+      model: OPENAI_MODEL,
       messages: [
-        { role: "system", content: systemPrompt },
-        { role: "user", content: userPrompt },
+        { role: "system", content: SYSTEM_PROMPT },
+        { role: "user", content: `Write today's post about: ${topicHint}` },
       ],
       temperature: 0.8,
       response_format: { type: "json_object" },
@@ -66,14 +110,18 @@ Rules:
   });
 
   if (!res.ok) {
-    throw new Error(`AI API request failed: ${res.status} ${await res.text()}`);
+    throw new Error(`OpenAI API request failed: ${res.status} ${await res.text()}`);
   }
 
   const data = await res.json();
   const raw = data.choices?.[0]?.message?.content;
-  if (!raw) throw new Error("AI API returned no content");
+  if (!raw) throw new Error("OpenAI API returned no content");
 
-  return JSON.parse(raw);
+  return extractJson(raw);
+}
+
+async function generatePost(topicHint) {
+  return PROVIDER === "openai" ? generateWithOpenAI(topicHint) : generateWithGemini(topicHint);
 }
 
 async function main() {
@@ -84,9 +132,10 @@ async function main() {
     return;
   }
 
-  if (!API_KEY) {
+  const hasKey = PROVIDER === "openai" ? Boolean(OPENAI_API_KEY) : Boolean(GEMINI_API_KEY);
+  if (!hasKey) {
     console.error(
-      "Missing AI_API_KEY environment variable. Set it as a GitHub Actions secret to enable daily posts."
+      `Missing API key for provider "${PROVIDER}". Set GEMINI_API_KEY (or AI_API_KEY) as a GitHub Actions secret to enable daily posts.`
     );
     process.exitCode = 1;
     return;
