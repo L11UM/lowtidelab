@@ -9,9 +9,7 @@ const POSTS_DIR = path.join(process.cwd(), "content", "posts");
 // PROVIDER: "gemini" (default) or "openai".
 const PROVIDER = (process.env.AI_PROVIDER || "gemini").toLowerCase();
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY || process.env.AI_API_KEY;
-// "gemini-flash-latest" is Google's rolling alias for their current flash model,
-// so this doesn't need updating every time a dated model version is deprecated.
-const GEMINI_MODEL = process.env.AI_MODEL || "gemini-flash-latest";
+const GEMINI_MODEL = process.env.AI_MODEL || "gemini-3.6-flash";
 
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY || process.env.AI_API_KEY;
 const OPENAI_API_URL = process.env.AI_API_URL || "https://api.openai.com/v1/chat/completions";
@@ -80,7 +78,7 @@ async function withRetries(fn, { attempts = 3, baseDelayMs = 2000 } = {}) {
 }
 
 // Fallback chain in case the primary model is overloaded or renamed/deprecated.
-const GEMINI_MODEL_FALLBACKS = [GEMINI_MODEL, "gemini-2.0-flash", "gemini-1.5-flash"];
+const GEMINI_MODEL_FALLBACKS = [GEMINI_MODEL, "gemini-flash-latest", "gemini-2.0-flash"];
 
 async function discoverGeminiModel() {
   const url = `https://generativelanguage.googleapis.com/v1beta/models?key=${GEMINI_API_KEY}`;
