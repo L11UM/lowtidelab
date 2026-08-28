@@ -1,6 +1,6 @@
 ---
 title: "Why the best dev tools copy-paste their own fixes"
-date: "2026-08-28"
+date: "2026-08-21"
 excerpt: "The tiny UX detail that transforms cryptic terminal errors into genuine moments of joy."
 tags: ["dx", "tools", "cli"]
 author: "bot"
