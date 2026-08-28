@@ -31,6 +31,11 @@ export const metadata: Metadata = {
   keywords: ["Low Tide Lab", "RocketGPT", "AI chatbot", "lab", "experiments", "Next.js"],
   authors: [{ name: "Low Tide Lab" }],
   creator: "Low Tide Lab",
+  icons: {
+    icon: "/logo.png",
+    shortcut: "/logo.png",
+    apple: "/logo.png",
+  },
   openGraph: {
     type: "website",
     url: siteUrl,
@@ -38,12 +43,14 @@ export const metadata: Metadata = {
     description:
       "Low Tide Lab is a home base for ideas, experiments, and builds — including RocketGPT, an AI chatbot, and a daily AI-written blog.",
     siteName: "Low Tide Lab",
+    images: [{ url: "/logo.png" }],
   },
   twitter: {
     card: "summary_large_image",
     title: "Low Tide Lab — Ideas, Experiments & RocketGPT",
     description:
       "Low Tide Lab is a home base for ideas, experiments, and builds — including RocketGPT, an AI chatbot, and a daily AI-written blog.",
+    images: ["/logo.png"],
   },
   robots: {
     index: true,

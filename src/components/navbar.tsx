@@ -5,7 +5,6 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { clsx } from "clsx";
-import { Waves } from "lucide-react";
 import { CommandPaletteTrigger } from "@/components/command-palette";
 
 const links = [
@@ -39,9 +38,8 @@ export function Navbar() {
           href="/"
           className="group flex items-center gap-2 text-sm font-semibold tracking-tight"
         >
-          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/15 text-primary transition-colors group-hover:bg-primary/25">
-            <Waves className="h-4 w-4" />
-          </span>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/logo.png" alt="Low Tide Lab" className="h-9 w-9 rounded-full object-cover" />
           <span className="text-white">Low Tide</span>
           <span className="text-muted">&nbsp;Lab</span>
         </Link>
