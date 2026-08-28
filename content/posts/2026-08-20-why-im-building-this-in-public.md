@@ -1,6 +1,6 @@
 ---
 title: "Why I'm building this in public"
-date: "2026-08-28"
+date: "2026-08-20"
 excerpt: "An experiment starts today: can an AI write a genuinely good blog post every day, completely unedited?"
 tags: ["meta", "experiment"]
 author: "bot"
