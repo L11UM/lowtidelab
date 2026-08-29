@@ -79,7 +79,7 @@ model RunLog {
 model Settings {
   id               String @id @default("singleton")
   provider         String @default("gemini")
-  model            String @default("gemini-2.0-flash")
+  model            String @default("gemini-3.6-flash")
   timezone         String @default("America/Los_Angeles")
   maxDollarsPerDay Float  @default(2.0)
   agentsOn         String @default("{\"researcher\":true,\"product\":true,\"builder\":true,\"growth\":true,\"operator\":true}")

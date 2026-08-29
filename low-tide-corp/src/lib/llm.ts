@@ -79,30 +79,46 @@ async function callAnthropic(system: string, user: string): Promise<{ text: stri
 }
 
 async function callGemini(system: string, user: string): Promise<{ text: string; usage: TokenUsage }> {
-  const model = process.env.GEMINI_MODEL || "gemini-2.0-flash";
-  const res = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${process.env.GEMINI_API_KEY}`,
-    {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        systemInstruction: { parts: [{ text: system }] },
-        contents: [{ role: "user", parts: [{ text: user }] }],
-        generationConfig: { temperature: 0.7, responseMimeType: "application/json" },
-      }),
+  // Gemini model names get deprecated over time; try the configured model first,
+  // then fall back through known-good alternatives instead of hard failing.
+  const candidates = [
+    process.env.GEMINI_MODEL,
+    "gemini-3.6-flash",
+    "gemini-2.0-flash",
+    "gemini-flash-latest",
+  ].filter((m): m is string => Boolean(m));
+  const models = [...new Set(candidates)];
+
+  let lastError: LlmError | null = null;
+  for (const model of models) {
+    const res = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${process.env.GEMINI_API_KEY}`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          systemInstruction: { parts: [{ text: system }] },
+          contents: [{ role: "user", parts: [{ text: user }] }],
+          generationConfig: { temperature: 0.7, responseMimeType: "application/json" },
+        }),
+      }
+    );
+    if (!res.ok) {
+      const body = await res.text();
+      lastError = new LlmError(`Gemini request failed (${res.status}) for model "${model}": ${body.slice(0, 500)}`);
+      // 404 (model retired) or 503 (overloaded) — try the next candidate model.
+      if (res.status === 404 || res.status === 503) continue;
+      throw lastError;
     }
-  );
-  if (!res.ok) {
-    const body = await res.text();
-    throw new LlmError(`Gemini request failed (${res.status}): ${body.slice(0, 500)}`);
+    const data = await res.json();
+    const text = data.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
+    const usage: TokenUsage = {
+      tokensIn: data.usageMetadata?.promptTokenCount ?? 0,
+      tokensOut: data.usageMetadata?.candidatesTokenCount ?? 0,
+    };
+    return { text, usage };
   }
-  const data = await res.json();
-  const text = data.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
-  const usage: TokenUsage = {
-    tokensIn: data.usageMetadata?.promptTokenCount ?? 0,
-    tokensOut: data.usageMetadata?.candidatesTokenCount ?? 0,
-  };
-  return { text, usage };
+  throw lastError ?? new LlmError("Gemini request failed: no models available");
 }
 
 function extractJson(text: string): string {
