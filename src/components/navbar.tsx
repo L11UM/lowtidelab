@@ -39,9 +39,7 @@ export function Navbar() {
           className="group flex items-center gap-2 text-sm font-semibold tracking-tight"
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/logo.png" alt="Low Tide Lab" className="h-9 w-9 rounded-full object-cover" />
-          <span className="text-white">Low Tide</span>
-          <span className="text-muted">&nbsp;Lab</span>
+          <img src="/logo.png" alt="Low Tide Lab" className="h-12 w-auto" />
         </Link>
 
         <div className="flex items-center gap-2 sm:gap-4">
