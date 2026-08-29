@@ -226,8 +226,9 @@ async function generatePost(userPrompt) {
 
 async function main() {
   const dateStr = todaySlugDate();
+  const forceRun = process.env.FORCE_POST === "true" || process.argv.includes("--force");
 
-  if (alreadyPostedToday(dateStr)) {
+  if (!forceRun && alreadyPostedToday(dateStr)) {
     console.log(`A post for ${dateStr} already exists — skipping.`);
     return;
   }
@@ -241,13 +242,16 @@ async function main() {
     return;
   }
 
-  const topic = TOPICS[Math.floor(Math.random() * TOPICS.length)];
+  const topicOverride = process.env.TOPIC_OVERRIDE?.trim();
+  const topic = topicOverride || TOPICS[Math.floor(Math.random() * TOPICS.length)];
   const recentTitles = getRecentTitles();
   const avoidNote =
     recentTitles.length > 0
       ? `\n\nRecent post titles to avoid repeating (pick something clearly different): ${recentTitles.join("; ")}`
       : "";
-  const userPrompt = `Write today's post. General area for inspiration: ${topic}. You don't have to stick strictly to this area — use it as a loose starting point and write about whatever genuinely interesting angle comes to mind.${avoidNote}`;
+  const userPrompt = topicOverride
+    ? `Write today's post specifically about: ${topicOverride}. Find a genuinely interesting, specific angle on this topic rather than a generic overview.${avoidNote}`
+    : `Write today's post. General area for inspiration: ${topic}. You don't have to stick strictly to this area — use it as a loose starting point and write about whatever genuinely interesting angle comes to mind.${avoidNote}`;
   const post = await generatePost(userPrompt);
 
   const slug = `${dateStr}-${slugify(post.title)}`;

@@ -5,6 +5,16 @@ on:
     # 14:00 UTC every day
     - cron: "0 14 * * *"
   workflow_dispatch:
+    inputs:
+      topic:
+        description: "Optional: force today's post to be about a specific topic"
+        required: false
+        type: string
+      force:
+        description: "Generate even if a post for today already exists"
+        required: false
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -30,6 +40,8 @@ jobs:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           AI_API_URL: ${{ vars.AI_API_URL }}
           AI_MODEL: ${{ vars.AI_MODEL }}
+          TOPIC_OVERRIDE: ${{ inputs.topic }}
+          FORCE_POST: ${{ inputs.force }}
         run: node scripts/generate-post.mjs
 
       - name: Commit and push new post
