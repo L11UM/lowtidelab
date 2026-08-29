@@ -1,0 +1,67 @@
+name: Weekly Lab Experiment
+
+on:
+  schedule:
+    # 16:00 UTC every Monday
+    - cron: "0 16 * * 1"
+  workflow_dispatch:
+    inputs:
+      topic:
+        description: "Optional: force this week's experiment to be inspired by a specific idea"
+        required: false
+        type: string
+      force:
+        description: "Generate even if an experiment was published in the last week"
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+  actions: write
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Generate this week's experiment
+        env:
+          AI_PROVIDER: ${{ vars.AI_PROVIDER || 'gemini' }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          AI_API_URL: ${{ vars.AI_API_URL }}
+          AI_MODEL: ${{ vars.AI_MODEL }}
+          TOPIC_OVERRIDE: ${{ inputs.topic }}
+          FORCE_EXPERIMENT: ${{ inputs.force }}
+        run: node scripts/generate-experiment.mjs
+
+      - name: Commit and push new experiment
+        id: commit
+        run: |
+          git config user.name "lab-experiment-bot"
+          git config user.email "lab-experiment-bot@users.noreply.github.com"
+          git add content/experiments
+          if git diff --cached --quiet; then
+            echo "No new experiment to commit."
+            echo "pushed=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          git commit -m "chore: weekly Lab experiment"
+          git push
+          echo "pushed=true" >> "$GITHUB_OUTPUT"
+
+      - name: Trigger site deploy
+        if: steps.commit.outputs.pushed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh workflow run deploy.yml --ref main

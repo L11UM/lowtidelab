@@ -1,0 +1,10 @@
+{
+  "number": 1,
+  "date": "2026-08-28",
+  "title": "Flow Field Drift",
+  "description": "Thousands of particles drift through an invisible current that bends around your cursor, leaving glowing trails like ink in water.",
+  "category": "generative-art",
+  "instructions": "Move your mouse (or finger) across the canvas to bend the current. Click anywhere to scatter the particles and let the field reshape itself. Leave it alone for a while and just watch the drift.",
+  "explanation": "This is a flow field: an invisible grid where every point has its own direction, generated here from layered sine waves (a cheap stand-in for real Perlin noise). Each particle just asks 'what direction does the field point at my position?' and nudges itself that way, frame after frame. Your cursor temporarily warps the nearby directions, which is why the trails bend around it. No particle is following any other particle or any central plan — the river-like patterns you see are a pure side effect of thousands of tiny, independent, local decisions.",
+  "labNotes": "First attempt used real Perlin noise but it required a whole permutation-table implementation just for a demo — swapped it for three overlapping sine waves at different frequencies, which turns out to look almost identical and is about 15 lines of code. Also tried giving particles a fixed lifespan that fades them out and respawns them elsewhere, which is why the trails feel like they're always circulating instead of eventually clumping in one corner. Next version idea: color particles by their local field angle instead of a single palette, so the current's shape becomes readable even without cursor interaction."
+}

@@ -55,6 +55,20 @@ export function CommandPalette() {
         action: () => router.push("/lab"),
         keywords: "ideas concepts experiments",
       },
+      {
+        id: "archive",
+        label: "Go to Experiment Archive",
+        icon: FlaskConical,
+        action: () => router.push("/lab/archive"),
+        keywords: "lab experiments history archive",
+      },
+      {
+        id: "blog",
+        label: "Go to Blog",
+        icon: FolderGit2,
+        action: () => router.push("/blog"),
+        keywords: "daily ai posts",
+      },
       { id: "about", label: "Go to About", icon: User, action: () => router.push("/about") },
       {
         id: "email",
