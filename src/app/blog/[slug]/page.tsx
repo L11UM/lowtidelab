@@ -44,7 +44,7 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
         <div className="mt-6 flex items-center gap-2 text-xs text-muted">
           {post.author === "bot" && (
             <span className="flex items-center gap-1 rounded-full border border-accent/30 bg-accent/10 px-2 py-0.5 text-accent-light">
-              <Bot className="h-3 w-3" /> written entirely by AI
+              <Bot className="h-3 w-3" /> written entirely by Oswald
             </span>
           )}
           <span>{date}</span>
@@ -67,8 +67,8 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
 
         {post.author === "bot" && (
           <p className="mt-4 max-w-lg text-xs leading-relaxed text-muted">
-            Part of an ongoing experiment: this post was generated automatically by AI on a
-            daily schedule, with no human edits before publishing.
+            Part of an ongoing experiment: this post was generated automatically by Oswald,
+            our resident AI, on a daily schedule, with no human edits before publishing.
           </p>
         )}
       </Reveal>

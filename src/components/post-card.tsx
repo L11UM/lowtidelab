@@ -23,7 +23,7 @@ export function PostCard({ post }: { post: PostMeta }) {
         <div className="flex items-center gap-2 text-xs text-muted">
           {post.author === "bot" && (
             <span className="flex items-center gap-1 rounded-full border border-accent/30 bg-accent/10 px-2 py-0.5 text-accent-light">
-              <Bot className="h-3 w-3" /> written by AI
+              <Bot className="h-3 w-3" /> written by Oswald
             </span>
           )}
           <span>{date}</span>

@@ -41,8 +41,10 @@ export default function AboutPage() {
         <p className="mt-6 max-w-2xl text-lg leading-relaxed text-muted">
           Low Tide Lab is a home base for ideas, experiments, and things worth
           building. Some of it ships as real products, some of it stays a
-          half-formed idea in the Lab, and some of it is a daily blog written
-          entirely by AI — all under one roof.
+          half-formed idea in the Lab, and some of it comes from{" "}
+          <span className="font-medium text-white">Oswald</span>, our resident
+          AI, who writes a daily blog post and builds a new interactive Lab
+          experiment every week — all under one roof.
         </p>
         <p className="mt-4 max-w-2xl leading-relaxed text-muted">
           Right now most of the energy here is going into{" "}

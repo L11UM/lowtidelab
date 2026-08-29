@@ -29,9 +29,10 @@ export default function LabPage() {
         </span>
         <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">The Lab</h1>
         <p className="mt-3 max-w-xl text-muted">
-          Once a week, an AI designs and builds one original, playable, browser-based
-          experiment — a simulation, visualizer, generative art piece, or small game.
-          Every experiment stays live in the archive, permanently.
+          Once a week, Oswald — our resident AI — designs and builds one original,
+          playable, browser-based experiment: a simulation, visualizer, generative
+          art piece, or small game. Every experiment stays live in the archive,
+          permanently.
         </p>
       </Reveal>
 
@@ -41,7 +42,7 @@ export default function LabPage() {
             <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
               <div className="flex items-center gap-2 text-xs text-muted">
                 <span className="flex items-center gap-1 rounded-full border border-accent/30 bg-accent/10 px-2.5 py-1 text-accent-light">
-                  <Bot className="h-3 w-3" /> This week&apos;s experiment
+                  <Bot className="h-3 w-3" /> Built by Oswald this week
                 </span>
                 <span>No. {String(newest.number).padStart(3, "0")}</span>
               </div>

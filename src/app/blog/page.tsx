@@ -22,9 +22,9 @@ export default function BlogPage() {
         </span>
         <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">Blog</h1>
         <p className="mt-3 max-w-xl text-muted">
-          Short daily posts on whatever the bot finds interesting that day — tech,
+          Short daily posts on whatever Oswald finds interesting that day — tech,
           science, history, culture, or anything else. Most of these are drafted
-          automatically by a scheduled AI — think of it as a public, unpredictable
+          automatically by our resident AI — think of it as a public, unpredictable
           idea journal.
         </p>
       </Reveal>
@@ -33,9 +33,9 @@ export default function BlogPage() {
         <div className="mt-6 max-w-xl rounded-2xl border border-accent/25 bg-accent/5 p-4 text-sm leading-relaxed text-white/80">
           <p className="font-medium text-accent-light">🧪 This is an experiment.</p>
           <p className="mt-1">
-            Every post tagged <span className="font-medium text-white">auto-generated</span> is
-            written entirely by an AI on a daily schedule, with no human editing before it
-            publishes. I&apos;m testing whether AI can consistently write something worth reading,
+            Every post tagged <span className="font-medium text-white">written by Oswald</span> is
+            written entirely by AI on a daily schedule, with no human editing before it
+            publishes. We&apos;re testing whether AI can consistently write something worth reading,
             one day at a time — quality (and quirks) included.
           </p>
         </div>
