@@ -66,10 +66,11 @@ export default function SettingsPage() {
             onChange={(e) => setSettings({ ...settings, provider: e.target.value })}
             className="rounded-lg border border-border bg-panel px-3 py-2 text-white outline-none focus:border-primary/50"
           >
+            <option value="gemini">Gemini (free tier)</option>
             <option value="openai">OpenAI</option>
             <option value="anthropic">Anthropic</option>
           </select>
-          <span className="text-xs text-muted">Actual model + API key are set via server env vars (OPENAI_MODEL / ANTHROPIC_MODEL, OPENAI_API_KEY / ANTHROPIC_API_KEY).</span>
+          <span className="text-xs text-muted">Actual model + API key are set via server env vars (GEMINI_MODEL / OPENAI_MODEL / ANTHROPIC_MODEL, GEMINI_API_KEY / OPENAI_API_KEY / ANTHROPIC_API_KEY).</span>
         </label>
 
         <label className="flex flex-col gap-1.5 text-sm">

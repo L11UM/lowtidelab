@@ -16,7 +16,7 @@ export async function GET() {
 }
 
 const SettingsInput = z.object({
-  provider: z.enum(["openai", "anthropic"]).optional(),
+  provider: z.enum(["openai", "anthropic", "gemini"]).optional(),
   model: z.string().optional(),
   timezone: z.string().optional(),
   maxDollarsPerDay: z.number().optional(),

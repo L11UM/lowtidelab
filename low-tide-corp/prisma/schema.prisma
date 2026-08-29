@@ -1,11 +1,12 @@
 // Low Tide Corp — data model.
-// SQLite by default for zero-config local dev; point DATABASE_URL at Postgres in production.
+// Postgres (e.g. free Neon.tech) so it works on serverless hosts like Vercel,
+// whose filesystem is ephemeral and can't hold a SQLite file across requests.
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -77,8 +78,8 @@ model RunLog {
 
 model Settings {
   id               String @id @default("singleton")
-  provider         String @default("openai")
-  model            String @default("gpt-4o-mini")
+  provider         String @default("gemini")
+  model            String @default("gemini-2.0-flash")
   timezone         String @default("America/Los_Angeles")
   maxDollarsPerDay Float  @default(2.0)
   agentsOn         String @default("{\"researcher\":true,\"product\":true,\"builder\":true,\"growth\":true,\"operator\":true}")

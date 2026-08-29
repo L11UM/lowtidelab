@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-// Minimal provider abstraction: OpenAI or Anthropic, chosen via LLM_PROVIDER.
+// Minimal provider abstraction: OpenAI, Anthropic, or Gemini (free tier), chosen via LLM_PROVIDER.
 // Uses plain fetch (no SDK dependency) and asks for strict JSON output that
 // is then validated against a zod schema, with one retry-with-feedback on failure.
 
@@ -9,13 +9,13 @@ type TokenUsage = { tokensIn: number; tokensOut: number };
 export class LlmError extends Error {}
 
 function provider() {
-  return (process.env.LLM_PROVIDER || "openai").toLowerCase();
+  return (process.env.LLM_PROVIDER || "gemini").toLowerCase();
 }
 
 function hasApiKey() {
-  return provider() === "anthropic"
-    ? Boolean(process.env.ANTHROPIC_API_KEY)
-    : Boolean(process.env.OPENAI_API_KEY);
+  if (provider() === "anthropic") return Boolean(process.env.ANTHROPIC_API_KEY);
+  if (provider() === "gemini") return Boolean(process.env.GEMINI_API_KEY);
+  return Boolean(process.env.OPENAI_API_KEY);
 }
 
 async function callOpenAI(system: string, user: string): Promise<{ text: string; usage: TokenUsage }> {
@@ -78,6 +78,33 @@ async function callAnthropic(system: string, user: string): Promise<{ text: stri
   return { text, usage };
 }
 
+async function callGemini(system: string, user: string): Promise<{ text: string; usage: TokenUsage }> {
+  const model = process.env.GEMINI_MODEL || "gemini-2.0-flash";
+  const res = await fetch(
+    `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${process.env.GEMINI_API_KEY}`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        systemInstruction: { parts: [{ text: system }] },
+        contents: [{ role: "user", parts: [{ text: user }] }],
+        generationConfig: { temperature: 0.7, responseMimeType: "application/json" },
+      }),
+    }
+  );
+  if (!res.ok) {
+    const body = await res.text();
+    throw new LlmError(`Gemini request failed (${res.status}): ${body.slice(0, 500)}`);
+  }
+  const data = await res.json();
+  const text = data.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
+  const usage: TokenUsage = {
+    tokensIn: data.usageMetadata?.promptTokenCount ?? 0,
+    tokensOut: data.usageMetadata?.candidatesTokenCount ?? 0,
+  };
+  return { text, usage };
+}
+
 function extractJson(text: string): string {
   const fenced = text.match(/```(?:json)?\s*([\s\S]*?)```/i);
   if (fenced) return fenced[1].trim();
@@ -88,7 +115,9 @@ function extractJson(text: string): string {
 }
 
 async function callProvider(system: string, user: string) {
-  return provider() === "anthropic" ? callAnthropic(system, user) : callOpenAI(system, user);
+  if (provider() === "anthropic") return callAnthropic(system, user);
+  if (provider() === "gemini") return callGemini(system, user);
+  return callOpenAI(system, user);
 }
 
 /**

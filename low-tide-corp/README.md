@@ -11,8 +11,8 @@ SSE streaming, LLM calls), which a static export can't do. Deploy it separately 
 ## Stack
 
 - Next.js 14 (App Router) + TypeScript + Tailwind
-- Prisma + SQLite by default (swap `DATABASE_URL` to Postgres for production)
-- Zod-validated structured LLM output (OpenAI or Anthropic via plain `fetch`, no SDK dependency)
+- Prisma + Postgres (free tier at [neon.tech](https://neon.tech) works well — Vercel's filesystem is ephemeral, so SQLite can't be used in production there)
+- Zod-validated structured LLM output (Gemini free tier by default, or OpenAI/Anthropic, via plain `fetch` — no SDK dependency)
 - Server-Sent Events for a live agent run stream
 
 ## Setup
@@ -20,8 +20,8 @@ SSE streaming, LLM calls), which a static export can't do. Deploy it separately 
 ```bash
 cd low-tide-corp
 npm install
-cp .env.example .env      # then fill in OPENAI_API_KEY or ANTHROPIC_API_KEY
-npm run db:push           # creates prisma/dev.db
+cp .env.example .env      # fill in DATABASE_URL (Neon) and GEMINI_API_KEY (or OpenAI/Anthropic)
+npm run db:push           # creates tables in your Postgres database
 npm run db:seed           # demo idea + 2 fake completed workdays, so the UI isn't blank
 npm run dev                # http://localhost:3100
 ```
