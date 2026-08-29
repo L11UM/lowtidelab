@@ -9,6 +9,9 @@ export const monetization = {
   stripeTipLink: "https://buy.stripe.com/YOUR_TIP_LINK",
   stripeMembershipLink: "https://buy.stripe.com/YOUR_MEMBERSHIP_LINK",
 
+  // Primary one-time tip link.
+  buyMeACoffeeUrl: "https://buymeacoffee.com/ltlab",
+
   // Optional fallback/alternate support links.
   koFiUrl: "https://ko-fi.com/lowtidelab",
   githubSponsorsUrl: "https://github.com/sponsors/lowtidelab",

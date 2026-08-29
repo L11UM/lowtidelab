@@ -22,7 +22,7 @@ export function SupportCTA() {
 
       <div className="flex flex-col justify-center gap-3">
         <Link
-          href={monetization.stripeTipLink}
+          href={monetization.buyMeACoffeeUrl}
           target="_blank"
           rel="noreferrer noopener"
           className="flex items-center justify-center gap-2 rounded-full bg-primary px-5 py-3 text-sm font-semibold text-white transition-transform hover:scale-[1.02] active:scale-[0.98]"

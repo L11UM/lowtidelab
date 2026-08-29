@@ -88,7 +88,7 @@ export function CommandPalette() {
         label: "Support the Lab",
         hint: "buy us a coffee",
         icon: Heart,
-        action: () => window.open(monetization.stripeTipLink, "_blank", "noreferrer"),
+        action: () => window.open(monetization.buyMeACoffeeUrl, "_blank", "noreferrer"),
         keywords: "tip donate coffee sponsor",
       },
     ],
