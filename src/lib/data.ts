@@ -20,6 +20,15 @@ export const projects: Project[] = [
     featured: true,
   },
   {
+    slug: "low-tide-corp",
+    title: "Low Tide Corp",
+    description:
+      "An experiment: a crew of AI agents — Orchestrator, Researcher, Product, Builder, Growth, Operator, and a Critic that can't be skipped — works one pinned business idea every day, unedited, and publishes a dated workday plus a living company brief that compounds over time.",
+    tags: ["AI", "Multi-agent", "Next.js", "Experiment"],
+    liveUrl: "#",
+    featured: true,
+  },
+  {
     slug: "example-project",
     title: "Example Project",
     description:

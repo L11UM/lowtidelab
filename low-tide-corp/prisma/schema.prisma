@@ -1,0 +1,87 @@
+// Low Tide Corp — data model.
+// SQLite by default for zero-config local dev; point DATABASE_URL at Postgres in production.
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Idea {
+  id         String   @id @default(cuid())
+  title      String
+  oneLiner   String
+  audience   String?
+  budget     String?
+  dontDo     String?
+  status     String   @default("active") // active | archived
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Workday {
+  id          String     @id @default(cuid())
+  date        String     @unique // YYYY-MM-DD
+  status      String     @default("queued") // queued | running | done | failed
+  agenda      String? // JSON: AgendaTask[]
+  summary     String?
+  criticScore Int?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  artifacts   Artifact[]
+  runLogs     RunLog[]
+}
+
+model Artifact {
+  id        String   @id @default(cuid())
+  workdayId String
+  workday   Workday  @relation(fields: [workdayId], references: [id], onDelete: Cascade)
+  agent     String // orchestrator | researcher | product | builder | growth | operator | critic
+  type      String // agenda | research | spec | copy | plan | critique | brief
+  body      String // JSON — the structured, schema-validated output
+  markdown  String // human-readable rendering of body
+  citations String? // JSON: {title,url}[]
+  error     String?
+  createdAt DateTime @default(now())
+
+  @@index([workdayId])
+}
+
+model CompanyBrief {
+  id            String   @id @default(cuid())
+  problem       String
+  icp           String
+  offer         String
+  bets          String // JSON string[]
+  killedIdeas   String // JSON string[]
+  openQuestions String // JSON string[]
+  version       Int      @default(1)
+  updatedAt     DateTime @updatedAt
+}
+
+model RunLog {
+  id        String   @id @default(cuid())
+  workdayId String?
+  workday   Workday? @relation(fields: [workdayId], references: [id], onDelete: Cascade)
+  agent     String?
+  level     String // info | error
+  message   String
+  tokensIn  Int?
+  tokensOut Int?
+  createdAt DateTime @default(now())
+
+  @@index([workdayId])
+}
+
+model Settings {
+  id               String @id @default("singleton")
+  provider         String @default("openai")
+  model            String @default("gpt-4o-mini")
+  timezone         String @default("America/Los_Angeles")
+  maxDollarsPerDay Float  @default(2.0)
+  agentsOn         String @default("{\"researcher\":true,\"product\":true,\"builder\":true,\"growth\":true,\"operator\":true}")
+  ownerName        String @default("Liam Thompson")
+  ownerEmail       String @default("liambt20@gmail.com")
+}
