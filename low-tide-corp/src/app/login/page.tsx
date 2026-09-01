@@ -24,7 +24,8 @@ export default function LoginPage() {
       setError(error ?? "Login failed.");
       return;
     }
-    router.push("/dashboard");
+    const next = new URLSearchParams(window.location.search).get("next");
+    router.push(next?.startsWith("/") ? next : "/dashboard");
     router.refresh();
   }
 

@@ -73,6 +73,9 @@ export async function POST(req: NextRequest) {
   const recentWorkdays = (
     await prisma.workday.findMany({ where: { date: { lt: date }, status: "done" }, orderBy: { date: "desc" }, take: 3 })
   ).map((r) => ({ date: r.date, summary: r.summary, criticScore: r.criticScore }));
+  const executionEvidence = (
+    await prisma.actionItem.findMany({ orderBy: { updatedAt: "desc" }, take: 6 })
+  ).map((action) => `[${action.status.toUpperCase()}] ${action.title}${action.evidence ? ` Evidence: ${action.evidence}` : ""}`);
 
   const ctx: AgentContext = {
     today: date,
@@ -82,6 +85,7 @@ export async function POST(req: NextRequest) {
     ownerName: owner.name,
     ownerEmail: owner.email,
     companyName: owner.companyName,
+    executionEvidence,
   };
 
   const combined = workday.artifacts

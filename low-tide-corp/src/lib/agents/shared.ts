@@ -47,6 +47,13 @@ export function buildContextBlock(ctx: AgentContext): string {
   }
   lines.push("");
 
+  if (ctx.executionEvidence.length) {
+    lines.push("## Real-world execution evidence");
+    lines.push("These are human-recorded outcomes. Treat them as evidence, not assumptions.");
+    for (const item of ctx.executionEvidence) lines.push(`- ${item}`);
+    lines.push("");
+  }
+
   if (ctx.task) {
     lines.push("## Your task today");
     lines.push(ctx.task);

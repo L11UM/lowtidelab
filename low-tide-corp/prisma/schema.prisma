@@ -34,9 +34,25 @@ model Workday {
   updatedAt   DateTime   @updatedAt
   artifacts   Artifact[]
   runLogs     RunLog[]
+  actionItems ActionItem[]
 
   @@unique([date, slot])
   @@index([date])
+}
+
+model ActionItem {
+  id          String   @id @default(cuid())
+  workdayId   String
+  workday     Workday  @relation(fields: [workdayId], references: [id], onDelete: Cascade)
+  title       String
+  status      String   @default("open") // open | done | blocked
+  evidence    String?
+  completedAt DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([status])
+  @@index([workdayId])
 }
 
 model Artifact {

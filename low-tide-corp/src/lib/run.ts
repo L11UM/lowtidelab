@@ -49,6 +49,23 @@ async function getRecentWorkdaySummaries(beforeDate: string) {
   return rows.map((r) => ({ date: r.date, summary: r.summary, criticScore: r.criticScore }));
 }
 
+async function getExecutionEvidence() {
+  const actions = await prisma.actionItem.findMany({
+    where: { status: { in: ["open", "done", "blocked"] } },
+    orderBy: { updatedAt: "desc" },
+    take: 6,
+  });
+  return actions.map((action) => {
+    const evidence = action.evidence ? ` Evidence: ${action.evidence}` : "";
+    return `[${action.status.toUpperCase()}] ${action.title}${evidence}`;
+  });
+}
+
+async function recordCriticAction(workdayId: string, title: string) {
+  await prisma.actionItem.deleteMany({ where: { workdayId, status: "open" } });
+  await prisma.actionItem.create({ data: { workdayId, title } });
+}
+
 function briefToContext(brief: Awaited<ReturnType<typeof getLatestBrief>>) {
   if (!brief) return null;
   return {
@@ -145,6 +162,7 @@ export async function runWorkday(
   const agentsOn = JSON.parse(settings.agentsOn) as Record<string, boolean>;
   const brief = briefToContext(await getLatestBrief());
   const recentWorkdays = await getRecentWorkdaySummaries(date);
+  const executionEvidence = await getExecutionEvidence();
 
   const baseCtx: AgentContext = {
     today: date,
@@ -154,6 +172,7 @@ export async function runWorkday(
     ownerName: owner.name,
     ownerEmail: owner.email,
     companyName: owner.companyName,
+    executionEvidence,
   };
 
   try {
@@ -199,6 +218,7 @@ export async function runWorkday(
       await saveArtifact(workday.id, "critic", "critique", critic.data, critic.markdown);
       await log(workday.id, "critic", "info", "Scored", critic.usage.tokensIn, critic.usage.tokensOut);
       criticScore = critic.data.overall;
+      await recordCriticAction(workday.id, critic.data.shippableNextAction);
       artifactsMarkdown.push(`## Critic\n${critic.markdown}`);
       emit({ type: "agent_done", agent: "critic", markdown: critic.markdown });
     } catch (err) {
@@ -272,6 +292,7 @@ export async function rerunAgent(
   }
   const brief = briefToContext(await getLatestBrief());
   const recentWorkdays = await getRecentWorkdaySummaries(date);
+  const executionEvidence = await getExecutionEvidence();
   const baseCtx: AgentContext = {
     today: date,
     idea: { title: idea.title, oneLiner: idea.oneLiner, audience: idea.audience, budget: idea.budget, dontDo: idea.dontDo },
@@ -280,6 +301,7 @@ export async function rerunAgent(
     ownerName: owner.name,
     ownerEmail: owner.email,
     companyName: owner.companyName,
+    executionEvidence,
   };
 
   const agenda = workday.agenda ? (JSON.parse(workday.agenda) as { agent: string; task: string; priority: string }[]) : [];
@@ -298,6 +320,7 @@ export async function rerunAgent(
       markdown = result.markdown;
       usage = result.usage;
       await prisma.workday.update({ where: { id: workday.id }, data: { criticScore: result.data.overall } });
+      await recordCriticAction(workday.id, result.data.shippableNextAction);
     } else {
       const tasksForAgent = agenda.filter((a) => a.agent === agentKey);
       const task = tasksForAgent.length

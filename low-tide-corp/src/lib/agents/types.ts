@@ -42,6 +42,7 @@ export interface AgentContext {
   ownerName: string;
   ownerEmail: string;
   companyName: string;
+  executionEvidence: string[];
   task?: string; // the specific task assigned by the Orchestrator for this agent today
 }
 
