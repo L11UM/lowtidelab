@@ -1,0 +1,21 @@
+name: Low Tide Corp Morning Workday
+
+on:
+  schedule:
+    # 16:00 UTC every day (the same morning slot as Vercel Cron).
+    # Vercel Cron runs the same endpoint too; the runner is idempotent by idea/date/slot.
+    - cron: "0 16 * * *"
+  workflow_dispatch:
+
+jobs:
+  run-morning-workday:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run Low Tide Corp morning workday
+        env:
+          CRON_SECRET: ${{ secrets.LOW_TIDE_CORP_CRON_SECRET }}
+        run: |
+          curl --fail-with-body --silent --show-error \
+            --retry 3 --retry-all-errors --max-time 300 \
+            -H "Authorization: Bearer ${CRON_SECRET}" \
+            https://low-tide-corp.vercel.app/api/cron/daily
