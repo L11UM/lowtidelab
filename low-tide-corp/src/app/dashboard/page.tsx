@@ -27,10 +27,17 @@ interface ActionItem {
   workday: { date: string; slot: string };
 }
 
+interface SystemPulse {
+  recentWorkdays: { date: string; slot: string; status: string; criticScore: number | null; updatedAt: string }[];
+  totalTokens: number;
+  recentErrors: number;
+}
+
 export default function DashboardPage() {
   const [idea, setIdea] = useState<Idea | null>(null);
   const [brief, setBrief] = useState<Brief | null>(null);
   const [actions, setActions] = useState<ActionItem[]>([]);
+  const [pulse, setPulse] = useState<SystemPulse | null>(null);
 
   function refresh() {
     fetch("/api/idea")
@@ -42,6 +49,9 @@ export default function DashboardPage() {
     fetch("/api/actions")
       .then((r) => r.json())
       .then(({ actions }) => setActions(actions ?? []));
+    fetch("/api/health")
+      .then((r) => r.json())
+      .then(setPulse);
   }
 
   useEffect(refresh, []);
@@ -69,6 +79,30 @@ export default function DashboardPage() {
       <div className="mt-8">
         <AgentConsole endpoint="/api/run" body={{}} onFinished={refresh} />
       </div>
+
+      {pulse && (
+        <section className="mt-10 grid gap-px overflow-hidden rounded-xl border border-border bg-border sm:grid-cols-3">
+          <div className="bg-surface p-4">
+            <p className="text-xs uppercase tracking-wide text-muted">Autonomy</p>
+            <p className="mt-2 text-sm font-semibold text-primary-light">Morning + night</p>
+            <p className="mt-1 text-xs text-muted">Scheduled daily sessions</p>
+          </div>
+          <div className="bg-surface p-4">
+            <p className="text-xs uppercase tracking-wide text-muted">Recent health</p>
+            <p className={`mt-2 text-sm font-semibold ${pulse.recentErrors ? "text-accent-light" : "text-primary-light"}`}>
+              {pulse.recentErrors ? `${pulse.recentErrors} logged issue${pulse.recentErrors === 1 ? "" : "s"}` : "Clear"}
+            </p>
+            <p className="mt-1 text-xs text-muted">Across the last 20 run events</p>
+          </div>
+          <div className="bg-surface p-4">
+            <p className="text-xs uppercase tracking-wide text-muted">Latest session</p>
+            <p className="mt-2 text-sm font-semibold capitalize text-white">
+              {pulse.recentWorkdays[0] ? `${pulse.recentWorkdays[0].slot} · ${pulse.recentWorkdays[0].status}` : "Waiting"}
+            </p>
+            <p className="mt-1 text-xs text-muted">{pulse.totalTokens.toLocaleString()} recent tokens</p>
+          </div>
+        </section>
+      )}
 
       <section className="mt-10 glass rounded-xl p-5">
         <p className="text-xs uppercase tracking-wide text-muted">Autonomous action queue</p>
