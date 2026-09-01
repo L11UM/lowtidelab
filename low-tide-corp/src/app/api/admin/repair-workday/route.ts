@@ -26,8 +26,9 @@ export async function POST(req: NextRequest) {
   }
 
   const log: string[] = [];
-  const workdayBefore = await prisma.workday.findUnique({
-    where: { date_slot: { date, slot } },
+  const workdayBefore = await prisma.workday.findFirst({
+    where: { date, slot },
+    orderBy: { updatedAt: "desc" },
     include: { artifacts: true },
   });
   if (!workdayBefore) return NextResponse.json({ error: "Workday not found" }, { status: 404 });
@@ -44,8 +45,9 @@ export async function POST(req: NextRequest) {
     }, slot);
   }
 
-  const workday = await prisma.workday.findUnique({
-    where: { date_slot: { date, slot } },
+  const workday = await prisma.workday.findFirst({
+    where: { date, slot },
+    orderBy: { updatedAt: "desc" },
     include: { artifacts: { orderBy: { createdAt: "asc" } } },
   });
   if (!workday) return NextResponse.json({ error: "Workday disappeared" }, { status: 500 });

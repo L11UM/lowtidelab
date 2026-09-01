@@ -26,5 +26,17 @@ export async function POST(req: NextRequest) {
   // Single active idea at a time — archive any currently active idea first.
   await prisma.idea.updateMany({ where: { status: "active" }, data: { status: "archived" } });
   const idea = await prisma.idea.create({ data: { ...parsed.data, status: "active" } });
+  await prisma.companyBrief.create({
+    data: {
+      ideaId: idea.id,
+      problem: idea.oneLiner,
+      icp: idea.audience || "UNKNOWN — validate the first reachable customer segment.",
+      offer: idea.title,
+      bets: JSON.stringify([]),
+      killedIdeas: JSON.stringify([]),
+      openQuestions: JSON.stringify(["What is the fastest evidence-based test of demand?"]),
+      version: 1,
+    },
+  });
   return NextResponse.json({ idea });
 }

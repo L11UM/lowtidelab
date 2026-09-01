@@ -36,22 +36,22 @@ async function getActiveIdea() {
   return prisma.idea.findFirst({ where: { status: "active" }, orderBy: { updatedAt: "desc" } });
 }
 
-async function getLatestBrief() {
-  return prisma.companyBrief.findFirst({ orderBy: { version: "desc" } });
+async function getLatestBrief(ideaId: string) {
+  return prisma.companyBrief.findFirst({ where: { ideaId }, orderBy: { version: "desc" } });
 }
 
-async function getRecentWorkdaySummaries(beforeDate: string) {
+async function getRecentWorkdaySummaries(beforeDate: string, ideaId: string) {
   const rows = await prisma.workday.findMany({
-    where: { date: { lt: beforeDate }, status: "done" },
+    where: { date: { lt: beforeDate }, status: "done", ideaId },
     orderBy: { date: "desc" },
     take: 3,
   });
   return rows.map((r) => ({ date: r.date, summary: r.summary, criticScore: r.criticScore }));
 }
 
-async function getExecutionEvidence() {
+async function getExecutionEvidence(ideaId: string) {
   const actions = await prisma.actionItem.findMany({
-    where: { status: { in: ["open", "done", "blocked"] } },
+    where: { status: { in: ["open", "done", "blocked"] }, workday: { ideaId } },
     orderBy: { updatedAt: "desc" },
     take: 6,
   });
@@ -140,7 +140,7 @@ export async function runWorkday(
     return;
   }
 
-  let workday = await prisma.workday.findUnique({ where: { date_slot: { date, slot } } });
+  let workday = await prisma.workday.findUnique({ where: { date_slot_ideaId: { date, slot, ideaId: idea.id } } });
   if (workday && workday.status === "done" && !force) {
     emit({ type: "workday_done", date, status: "done", criticScore: workday.criticScore });
     return;
@@ -154,15 +154,15 @@ export async function runWorkday(
     await prisma.artifact.deleteMany({ where: { workdayId: workday.id } });
     workday = await prisma.workday.update({ where: { id: workday.id }, data: { status: "running", summary: null, criticScore: null } });
   } else if (!workday) {
-    workday = await prisma.workday.create({ data: { date, slot, status: "running" } });
+    workday = await prisma.workday.create({ data: { ideaId: idea.id, date, slot, status: "running" } });
   } else {
     workday = await prisma.workday.update({ where: { id: workday.id }, data: { status: "running" } });
   }
 
   const agentsOn = JSON.parse(settings.agentsOn) as Record<string, boolean>;
-  const brief = briefToContext(await getLatestBrief());
-  const recentWorkdays = await getRecentWorkdaySummaries(date);
-  const executionEvidence = await getExecutionEvidence();
+  const brief = briefToContext(await getLatestBrief(idea.id));
+  const recentWorkdays = await getRecentWorkdaySummaries(date, idea.id);
+  const executionEvidence = await getExecutionEvidence(idea.id);
 
   const baseCtx: AgentContext = {
     today: date,
@@ -230,10 +230,11 @@ export async function runWorkday(
     // 4. Synthesize the updated company brief (best-effort; does not fail the day).
     await sleep(AGENT_STAGGER_MS);
     try {
-      const prevBrief = await getLatestBrief();
+      const prevBrief = await getLatestBrief(idea.id);
       const briefResult = await synthesizeBrief(baseCtx, artifactsMarkdown.join("\n\n"));
       await prisma.companyBrief.create({
         data: {
+          ideaId: idea.id,
           problem: briefResult.data.problem,
           icp: briefResult.data.icp,
           offer: briefResult.data.offer,
@@ -280,19 +281,22 @@ export async function rerunAgent(
   emit: Emit,
   slot: "morning" | "night" = "morning"
 ) {
-  const workday = await prisma.workday.findUnique({ where: { date_slot: { date, slot } }, include: { artifacts: true } });
-  if (!workday) {
-    emit({ type: "workday_error", error: `No workday found for ${date}` });
-    return;
-  }
   const idea = await getActiveIdea();
   if (!idea) {
     emit({ type: "workday_error", error: "No active idea is pinned." });
     return;
   }
-  const brief = briefToContext(await getLatestBrief());
-  const recentWorkdays = await getRecentWorkdaySummaries(date);
-  const executionEvidence = await getExecutionEvidence();
+  const workday = await prisma.workday.findUnique({
+    where: { date_slot_ideaId: { date, slot, ideaId: idea.id } },
+    include: { artifacts: true },
+  });
+  if (!workday) {
+    emit({ type: "workday_error", error: `No workday found for ${date}` });
+    return;
+  }
+  const brief = briefToContext(await getLatestBrief(idea.id));
+  const recentWorkdays = await getRecentWorkdaySummaries(date, idea.id);
+  const executionEvidence = await getExecutionEvidence(idea.id);
   const baseCtx: AgentContext = {
     today: date,
     idea: { title: idea.title, oneLiner: idea.oneLiner, audience: idea.audience, budget: idea.budget, dontDo: idea.dontDo },

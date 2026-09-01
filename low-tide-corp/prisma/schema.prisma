@@ -20,10 +20,14 @@ model Idea {
   status     String   @default("active") // active | archived
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
+  workdays   Workday[]
+  briefs     CompanyBrief[]
 }
 
 model Workday {
   id          String     @id @default(cuid())
+  ideaId      String?
+  idea        Idea?      @relation(fields: [ideaId], references: [id], onDelete: SetNull)
   date        String     // YYYY-MM-DD
   slot        String     @default("morning") // morning | night
   status      String     @default("queued") // queued | running | done | failed
@@ -36,8 +40,9 @@ model Workday {
   runLogs     RunLog[]
   actionItems ActionItem[]
 
-  @@unique([date, slot])
+  @@unique([date, slot, ideaId])
   @@index([date])
+  @@index([ideaId])
 }
 
 model ActionItem {
@@ -72,6 +77,8 @@ model Artifact {
 
 model CompanyBrief {
   id            String   @id @default(cuid())
+  ideaId        String?
+  idea          Idea?    @relation(fields: [ideaId], references: [id], onDelete: SetNull)
   problem       String
   icp           String
   offer         String
@@ -80,6 +87,8 @@ model CompanyBrief {
   openQuestions String // JSON string[]
   version       Int      @default(1)
   updatedAt     DateTime @updatedAt
+
+  @@index([ideaId])
 }
 
 model RunLog {
