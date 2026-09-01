@@ -38,6 +38,8 @@ export default function DashboardPage() {
   const [brief, setBrief] = useState<Brief | null>(null);
   const [actions, setActions] = useState<ActionItem[]>([]);
   const [pulse, setPulse] = useState<SystemPulse | null>(null);
+  const [evidence, setEvidence] = useState<Record<string, string>>({});
+  const [updatingAction, setUpdatingAction] = useState<string | null>(null);
 
   function refresh() {
     fetch("/api/idea")
@@ -55,6 +57,17 @@ export default function DashboardPage() {
   }
 
   useEffect(refresh, []);
+
+  async function updateAction(id: string, status: "done" | "blocked") {
+    setUpdatingAction(id);
+    await fetch(`/api/actions/${id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ status, evidence: evidence[id] ?? "" }),
+    });
+    setUpdatingAction(null);
+    refresh();
+  }
 
   return (
     <div className="container-x max-w-3xl py-12">
@@ -120,6 +133,32 @@ export default function DashboardPage() {
                   <span className="shrink-0 rounded-full border border-accent/30 bg-accent/10 px-2 py-0.5 text-[11px] font-medium capitalize text-accent-light">{action.status}</span>
                 </div>
                 <p className="mt-1 text-xs text-muted">From {action.workday.date} {action.workday.slot} session{action.evidence ? ` · ${action.evidence}` : ""}</p>
+                {action.status === "open" && (
+                  <div className="mt-3 flex flex-col gap-2 sm:flex-row">
+                    <input
+                      value={evidence[action.id] ?? ""}
+                      onChange={(event) => setEvidence({ ...evidence, [action.id]: event.target.value })}
+                      placeholder="What happened? Add real evidence."
+                      className="min-w-0 flex-1 rounded-md border border-border bg-surface2 px-3 py-1.5 text-xs text-white outline-none focus:border-primary/50"
+                    />
+                    <div className="flex shrink-0 gap-2">
+                      <button
+                        onClick={() => updateAction(action.id, "done")}
+                        disabled={updatingAction === action.id}
+                        className="rounded-md bg-primary px-3 py-1.5 text-xs font-medium text-white disabled:opacity-60"
+                      >
+                        Done
+                      </button>
+                      <button
+                        onClick={() => updateAction(action.id, "blocked")}
+                        disabled={updatingAction === action.id}
+                        className="rounded-md border border-border px-3 py-1.5 text-xs font-medium text-muted hover:text-white disabled:opacity-60"
+                      >
+                        Blocked
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             ))}
           </div>
