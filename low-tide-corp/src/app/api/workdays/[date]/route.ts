@@ -9,5 +9,7 @@ export async function GET(_req: Request, { params }: { params: { date: string } 
     include: { artifacts: { orderBy: { createdAt: "asc" } } },
   });
   if (!workday) return NextResponse.json({ error: "Not found" }, { status: 404 });
-  return NextResponse.json({ workday });
+  const latestArtifacts = new Map<string, (typeof workday.artifacts)[number]>();
+  for (const artifact of workday.artifacts) latestArtifacts.set(artifact.agent, artifact);
+  return NextResponse.json({ workday: { ...workday, artifacts: [...latestArtifacts.values()] } });
 }
