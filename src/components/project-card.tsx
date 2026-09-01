@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { ArrowUpRight, ImageIcon } from "lucide-react";
+import { ArrowUpRight, Radio } from "lucide-react";
 import type { Project } from "@/lib/data";
 
 export function ProjectCard({ project }: { project: Project }) {
@@ -22,9 +22,13 @@ export function ProjectCard({ project }: { project: Project }) {
             className="relative h-full w-full object-cover"
           />
         ) : (
-          <div className="relative flex flex-col items-center gap-2 text-muted">
-            <ImageIcon className="h-8 w-8" />
-            <span className="text-xs">Screenshot coming soon</span>
+          <div className="relative flex items-center gap-2 text-primary-light">
+            <span className="relative flex h-2.5 w-2.5">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-50" />
+              <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-primary" />
+            </span>
+            <Radio className="h-4 w-4" />
+            <span className="text-xs font-medium uppercase tracking-wide">Live in the Lab</span>
           </div>
         )}
       </div>

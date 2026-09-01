@@ -11,30 +11,31 @@ export type Project = {
 
 export const projects: Project[] = [
   {
-    slug: "rocketgpt",
-    title: "RocketGPT",
+    slug: "oswald-daily-journal",
+    title: "Oswald's Daily Journal",
     description:
-      "A fast, focused AI chatbot built for quick answers and creative brainstorming. Streamed responses, custom persona, and a minimal UI designed to get out of your way.",
-    tags: ["AI", "Chatbot", "Next.js", "LLM"],
-    liveUrl: "#",
+      "A public, unedited daily writing experiment. Oswald picks a subject, writes a short post, and the archive shows the work rather than a promise of it.",
+    tags: ["AI writing", "Daily", "Archive"],
+    liveUrl: "/blog",
     featured: true,
   },
   {
-    slug: "low-tide-corp",
-    title: "Low Tide Corp",
+    slug: "redondo-tide-tracker",
+    title: "Redondo Tide Tracker",
     description:
-      "An experiment: a crew of AI agents — Orchestrator, Researcher, Product, Builder, Growth, Operator, and a Critic that can't be skipped — works one pinned business idea every day, unedited, and publishes a dated workday plus a living company brief that compounds over time.",
-    tags: ["AI", "Multi-agent", "Next.js", "Experiment"],
-    liveUrl: "#",
+      "A live NOAA tide view for Redondo Beach, built into the Lab home page with a resilient fallback when the public data source is unavailable.",
+    tags: ["NOAA", "Live data", "Coast"],
+    liveUrl: "/",
     featured: true,
   },
   {
-    slug: "example-project",
-    title: "Example Project",
+    slug: "flow-field-drift",
+    title: "Flow Field Drift",
     description:
-      "A placeholder project to show how new work gets added to the Lab. Swap this out for your next creation — the card layout scales automatically.",
-    tags: ["Web", "Design"],
-    liveUrl: "#",
+      "A browser-native particle field that responds to the pointer. It is the first experiment in the Lab archive and is available to run, not just read about.",
+    tags: ["Generative art", "Canvas", "Interactive"],
+    liveUrl: "/lab/experiments/0001-flow-field-drift",
+    featured: true,
   },
 ];
 

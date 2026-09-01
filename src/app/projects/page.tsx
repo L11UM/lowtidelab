@@ -5,17 +5,16 @@ import { projects } from "@/lib/data";
 
 export const metadata: Metadata = {
   title: "Projects",
-  description: "A collection of things I've built, including RocketGPT.",
+  description: "Live experiments and systems built by Low Tide Lab.",
 };
 
 export default function ProjectsPage() {
   return (
     <section className="container-x py-24">
       <Reveal>
-        <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">Projects</h1>
+        <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">Public Work</h1>
         <p className="mt-3 max-w-xl text-muted">
-          Things I&apos;ve shipped, am shipping, or am proud enough of to show
-          off. New projects get added here as I build them.
+          Only things you can actually open, use, or inspect. The private work stays private; this is the public record.
         </p>
       </Reveal>
 
