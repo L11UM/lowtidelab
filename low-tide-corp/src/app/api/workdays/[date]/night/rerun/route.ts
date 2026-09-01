@@ -12,9 +12,7 @@ const Body = z.object({
 
 export async function POST(req: NextRequest, { params }: { params: { date: string } }) {
   const parsed = Body.safeParse(await req.json().catch(() => ({})));
-  if (!parsed.success) {
-    return new Response(JSON.stringify({ error: parsed.error.message }), { status: 400 });
-  }
+  if (!parsed.success) return new Response(JSON.stringify({ error: parsed.error.message }), { status: 400 });
   const agent = parsed.data.agent as Exclude<AgentKey, "orchestrator">;
-  return sseResponse((emit) => rerunAgent(params.date, agent, emit, "morning"));
+  return sseResponse((emit) => rerunAgent(params.date, agent, emit, "night"));
 }

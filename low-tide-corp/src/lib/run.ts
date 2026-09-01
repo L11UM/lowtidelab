@@ -100,7 +100,12 @@ const AGENT_RUNNERS: Record<Exclude<AgentKey, "orchestrator" | "critic">, (ctx: 
  * date is already "done" and force is not set, it returns immediately without
  * re-running agents.
  */
-export async function runWorkday(dateOverride: string | undefined, force: boolean, emit: Emit) {
+export async function runWorkday(
+  dateOverride: string | undefined,
+  force: boolean,
+  emit: Emit,
+  slot: "morning" | "night" = "morning"
+) {
   const settings = await getSettings();
   const date = dateOverride ?? todayInTimezone(settings.timezone);
   emit({ type: "workday_start", date });
@@ -111,7 +116,7 @@ export async function runWorkday(dateOverride: string | undefined, force: boolea
     return;
   }
 
-  let workday = await prisma.workday.findUnique({ where: { date } });
+  let workday = await prisma.workday.findUnique({ where: { date_slot: { date, slot } } });
   if (workday && workday.status === "done" && !force) {
     emit({ type: "workday_done", date, status: "done", criticScore: workday.criticScore });
     return;
@@ -125,7 +130,7 @@ export async function runWorkday(dateOverride: string | undefined, force: boolea
     await prisma.artifact.deleteMany({ where: { workdayId: workday.id } });
     workday = await prisma.workday.update({ where: { id: workday.id }, data: { status: "running", summary: null, criticScore: null } });
   } else if (!workday) {
-    workday = await prisma.workday.create({ data: { date, status: "running" } });
+    workday = await prisma.workday.create({ data: { date, slot, status: "running" } });
   } else {
     workday = await prisma.workday.update({ where: { id: workday.id }, data: { status: "running" } });
   }
@@ -239,8 +244,13 @@ function agentTypeFor(agent: string): string {
 }
 
 /** Re-runs a single agent for an existing workday date, replacing its artifact. */
-export async function rerunAgent(date: string, agentKey: Exclude<AgentKey, "orchestrator">, emit: Emit) {
-  const workday = await prisma.workday.findUnique({ where: { date }, include: { artifacts: true } });
+export async function rerunAgent(
+  date: string,
+  agentKey: Exclude<AgentKey, "orchestrator">,
+  emit: Emit,
+  slot: "morning" | "night" = "morning"
+) {
+  const workday = await prisma.workday.findUnique({ where: { date_slot: { date, slot } }, include: { artifacts: true } });
   if (!workday) {
     emit({ type: "workday_error", error: `No workday found for ${date}` });
     return;

@@ -24,7 +24,8 @@ model Idea {
 
 model Workday {
   id          String     @id @default(cuid())
-  date        String     @unique // YYYY-MM-DD
+  date        String     // YYYY-MM-DD
+  slot        String     @default("morning") // morning | night
   status      String     @default("queued") // queued | running | done | failed
   agenda      String? // JSON: AgendaTask[]
   summary     String?
@@ -33,6 +34,9 @@ model Workday {
   updatedAt   DateTime   @updatedAt
   artifacts   Artifact[]
   runLogs     RunLog[]
+
+  @@unique([date, slot])
+  @@index([date])
 }
 
 model Artifact {

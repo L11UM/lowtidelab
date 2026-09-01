@@ -26,14 +26,16 @@ interface Workday {
 const AGENT_ORDER = ["orchestrator", "researcher", "product", "builder", "growth", "operator", "critic"];
 
 export default function WorkdayDetailPage() {
-  const params = useParams<{ date: string }>();
+  const params = useParams<{ date: string; slot?: "night" }>();
   const date = params.date;
+  const slot = params.slot === "night" ? "night" : "morning";
   const [workday, setWorkday] = useState<Workday | null>(null);
   const [tab, setTab] = useState<string | null>(null);
   const [rerunning, setRerunning] = useState<string | null>(null);
 
   function refresh() {
-    fetch(`/api/workdays/${date}`)
+    const suffix = slot === "night" ? "/night" : "";
+    fetch(`/api/workdays/${date}${suffix}`)
       .then((r) => r.json())
       .then(({ workday }) => {
         setWorkday(workday);
@@ -41,7 +43,7 @@ export default function WorkdayDetailPage() {
       });
   }
 
-  useEffect(refresh, [date]);
+  useEffect(refresh, [date, slot]);
 
   if (!workday) {
     return (
@@ -57,7 +59,7 @@ export default function WorkdayDetailPage() {
   return (
     <div className="container-x max-w-3xl py-12">
       <div className="flex items-center justify-between gap-3">
-        <h1 className="text-2xl font-semibold tracking-tight">{workday.date}</h1>
+        <h1 className="text-2xl font-semibold tracking-tight">{workday.date} <span className="text-base font-normal capitalize text-muted">{slot} session</span></h1>
         <div className="flex items-center gap-2">
           <StatusBadge status={workday.status} />
           <ScoreBadge score={workday.criticScore} />
@@ -92,7 +94,7 @@ export default function WorkdayDetailPage() {
           <div className="mt-4 border-t border-border pt-4">
             {rerunning === tab ? (
               <AgentConsole
-                endpoint={`/api/workdays/${date}/rerun`}
+                endpoint={`/api/workdays/${date}${slot === "night" ? "/night" : ""}/rerun`}
                 body={{ agent: tab }}
                 onFinished={() => {
                   setRerunning(null);

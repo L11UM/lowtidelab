@@ -7,6 +7,7 @@ import { StatusBadge, ScoreBadge } from "@/components/badges";
 interface Workday {
   id: string;
   date: string;
+  slot: "morning" | "night";
   status: string;
   summary: string | null;
   criticScore: number | null;
@@ -31,9 +32,9 @@ export default function WorkdaysPage() {
       ) : (
         <div className="mt-8 flex flex-col gap-3">
           {workdays.map((wd) => (
-            <Link key={wd.id} href={`/workdays/${wd.date}`} className="glass block rounded-xl p-4 transition-colors hover:border-white/20">
+            <Link key={wd.id} href={wd.slot === "night" ? `/workdays/${wd.date}/night` : `/workdays/${wd.date}`} className="glass block rounded-xl p-4 transition-colors hover:border-white/20">
               <div className="flex items-center justify-between gap-3">
-                <span className="font-semibold">{wd.date}</span>
+                <span className="font-semibold">{wd.date} <span className="text-xs font-normal capitalize text-muted">{wd.slot}</span></span>
                 <div className="flex items-center gap-2">
                   <StatusBadge status={wd.status} />
                   <ScoreBadge score={wd.criticScore} />

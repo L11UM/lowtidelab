@@ -1,0 +1,20 @@
+name: Low Tide Corp Nightly Recovery
+
+on:
+  schedule:
+    # 11:00 PM Mountain Standard Time (UTC-7), every day.
+    - cron: "0 6 * * *"
+  workflow_dispatch:
+
+jobs:
+  continue-workday:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run Low Tide Corp night workday
+        env:
+          CRON_SECRET: ${{ secrets.LOW_TIDE_CORP_CRON_SECRET }}
+        run: |
+          curl --fail-with-body --silent --show-error \
+            --retry 3 --retry-all-errors --max-time 300 \
+            -H "Authorization: Bearer ${CRON_SECRET}" \
+            https://low-tide-corp.vercel.app/api/cron/night

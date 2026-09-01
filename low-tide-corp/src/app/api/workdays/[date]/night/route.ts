@@ -5,7 +5,7 @@ export const dynamic = "force-dynamic";
 
 export async function GET(_req: Request, { params }: { params: { date: string } }) {
   const workday = await prisma.workday.findUnique({
-    where: { date_slot: { date: params.date, slot: "morning" } },
+    where: { date_slot: { date: params.date, slot: "night" } },
     include: { artifacts: { orderBy: { createdAt: "asc" } } },
   });
   if (!workday) return NextResponse.json({ error: "Not found" }, { status: 404 });

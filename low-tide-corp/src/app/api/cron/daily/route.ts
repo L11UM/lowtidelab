@@ -11,14 +11,14 @@ function authorized(req: NextRequest): boolean {
 }
 
 /**
- * Invoked once per day by Vercel Cron. `runWorkday` is idempotent by date, so
+ * Invoked once per day by Vercel Cron. `runWorkday` is idempotent by date/slot, so
  * duplicate delivery is harmless and the existing Neon brief/artifacts remain intact.
  */
 export async function GET(req: NextRequest) {
   if (!authorized(req)) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const events: RunEvent[] = [];
-  await runWorkday(undefined, false, (event) => events.push(event));
+  await runWorkday(undefined, false, (event) => events.push(event), "morning");
   const finalEvent = events.at(-1);
 
   if (finalEvent?.type === "workday_error") {
