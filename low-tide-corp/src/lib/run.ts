@@ -57,13 +57,27 @@ async function getExecutionEvidence(ideaId: string) {
   });
   return actions.map((action) => {
     const evidence = action.evidence ? ` Evidence: ${action.evidence}` : "";
-    return `[${action.status.toUpperCase()}] ${action.title}${evidence}`;
+    const metric = action.successMetric ? ` Success: ${action.successMetric}.` : "";
+    const kill = action.killCriterion ? ` Kill: ${action.killCriterion}.` : "";
+    return `[${action.status.toUpperCase()}] ${action.title}${metric}${kill}${evidence}`;
   });
 }
 
-async function recordCriticAction(workdayId: string, title: string) {
+async function recordCriticAction(
+  workdayId: string,
+  title: string,
+  experiment?: { hypothesis: string; successMetric: string; killCriterion: string }
+) {
   await prisma.actionItem.deleteMany({ where: { workdayId, status: "open" } });
-  await prisma.actionItem.create({ data: { workdayId, title } });
+  await prisma.actionItem.create({
+    data: {
+      workdayId,
+      title,
+      hypothesis: experiment?.hypothesis,
+      successMetric: experiment?.successMetric,
+      killCriterion: experiment?.killCriterion,
+    },
+  });
 }
 
 function briefToContext(brief: Awaited<ReturnType<typeof getLatestBrief>>) {
@@ -218,7 +232,7 @@ export async function runWorkday(
       await saveArtifact(workday.id, "critic", "critique", critic.data, critic.markdown);
       await log(workday.id, "critic", "info", "Scored", critic.usage.tokensIn, critic.usage.tokensOut);
       criticScore = critic.data.overall;
-      await recordCriticAction(workday.id, critic.data.shippableNextAction);
+      await recordCriticAction(workday.id, critic.data.shippableNextAction, critic.data.experiment);
       artifactsMarkdown.push(`## Critic\n${critic.markdown}`);
       emit({ type: "agent_done", agent: "critic", markdown: critic.markdown });
     } catch (err) {
@@ -324,7 +338,7 @@ export async function rerunAgent(
       markdown = result.markdown;
       usage = result.usage;
       await prisma.workday.update({ where: { id: workday.id }, data: { criticScore: result.data.overall } });
-      await recordCriticAction(workday.id, result.data.shippableNextAction);
+      await recordCriticAction(workday.id, result.data.shippableNextAction, result.data.experiment);
     } else {
       const tasksForAgent = agenda.filter((a) => a.agent === agentKey);
       const task = tasksForAgent.length

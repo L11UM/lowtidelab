@@ -15,6 +15,10 @@ export function renderCriticMarkdown(out: CriticOutput): string {
     lines.push("");
   }
   lines.push("### Required next experiment", out.requiredNextExperiment, "");
+  lines.push("### Proof gate");
+  lines.push(`- Hypothesis: ${out.experiment.hypothesis}`);
+  lines.push(`- Success metric: ${out.experiment.successMetric}`);
+  lines.push(`- Kill criterion: ${out.experiment.killCriterion}`, "");
   lines.push("### Shippable next action (<2 hours)", out.shippableNextAction, "");
   lines.push("### Verdict", out.verdict);
   return lines.join("\n");
@@ -22,7 +26,7 @@ export function renderCriticMarkdown(out: CriticOutput): string {
 
 export async function runCritic(ctx: AgentContext) {
   const system = systemPromptFor("Critic", ctx.ownerName);
-  const user = `${buildContextBlock(ctx)}\n\nYou cannot be skipped. Attack weak assumptions in today's work (provided below as your task). Score clarity, novelty, feasibility, and moat from 1-10 each, give an overall score, list concrete weaknesses, name the ONE required next experiment, and give ONE shippable next action a human could complete in under 2 hours today.\n\nReturn JSON matching: { scores: {clarity, novelty, feasibility, moat}, overall, weaknesses: string[], requiredNextExperiment, shippableNextAction, verdict }`;
+  const user = `${buildContextBlock(ctx)}\n\nYou cannot be skipped. Attack weak assumptions in today's work (provided below as your task). Score clarity, novelty, feasibility, and moat from 1-10 each, give an overall score, list concrete weaknesses, name the ONE required next experiment, define a falsifiable proof gate (hypothesis, measurable success metric, and kill criterion), and give ONE shippable next action a human could complete in under 2 hours today.\n\nReturn JSON matching: { scores: {clarity, novelty, feasibility, moat}, overall, weaknesses: string[], requiredNextExperiment, experiment: {hypothesis, successMetric, killCriterion}, shippableNextAction, verdict }`;
   const { data, usage } = await generateStructured(system, user, CriticSchema);
   return { data, usage, markdown: renderCriticMarkdown(data) };
 }

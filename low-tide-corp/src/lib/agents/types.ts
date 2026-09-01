@@ -121,6 +121,11 @@ export const CriticSchema = z.object({
   overall: z.number().min(1).max(10),
   weaknesses: z.array(z.string()).default([]),
   requiredNextExperiment: z.string(),
+  experiment: z.object({
+    hypothesis: z.string(),
+    successMetric: z.string(),
+    killCriterion: z.string(),
+  }),
   shippableNextAction: z.string().describe("One thing a human could do in under 2 hours"),
   verdict: z.string(),
 });

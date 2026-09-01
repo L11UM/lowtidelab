@@ -23,6 +23,9 @@ interface ActionItem {
   id: string;
   title: string;
   status: "open" | "done" | "blocked";
+  hypothesis: string | null;
+  successMetric: string | null;
+  killCriterion: string | null;
   evidence: string | null;
   workday: { date: string; slot: string };
 }
@@ -133,6 +136,12 @@ export default function DashboardPage() {
                   <span className="shrink-0 rounded-full border border-accent/30 bg-accent/10 px-2 py-0.5 text-[11px] font-medium capitalize text-accent-light">{action.status}</span>
                 </div>
                 <p className="mt-1 text-xs text-muted">From {action.workday.date} {action.workday.slot} session{action.evidence ? ` · ${action.evidence}` : ""}</p>
+                {action.successMetric && (
+                  <div className="mt-2 border-l-2 border-primary/40 pl-3 text-xs leading-relaxed text-muted">
+                    <p><span className="text-white/80">Prove:</span> {action.successMetric}</p>
+                    {action.killCriterion && <p><span className="text-white/80">Kill:</span> {action.killCriterion}</p>}
+                  </div>
+                )}
                 {action.status === "open" && (
                   <div className="mt-3 flex flex-col gap-2 sm:flex-row">
                     <input

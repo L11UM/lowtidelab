@@ -51,6 +51,9 @@ model ActionItem {
   workday     Workday  @relation(fields: [workdayId], references: [id], onDelete: Cascade)
   title       String
   status      String   @default("open") // open | done | blocked
+  hypothesis  String?
+  successMetric String?
+  killCriterion String?
   evidence    String?
   completedAt DateTime?
   createdAt   DateTime @default(now())
