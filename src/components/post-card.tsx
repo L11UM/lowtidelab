@@ -4,6 +4,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { Bot, ArrowUpRight } from "lucide-react";
 import type { PostMeta } from "@/lib/posts";
+import { trackBlogEvent } from "@/components/blog-analytics";
 
 export function PostCard({ post }: { post: PostMeta }) {
   const date = post.date
@@ -18,6 +19,7 @@ export function PostCard({ post }: { post: PostMeta }) {
     <motion.div whileHover={{ y: -4 }} transition={{ type: "spring", stiffness: 300, damping: 24 }}>
       <Link
         href={`/blog/${post.slug}`}
+        onClick={() => trackBlogEvent("blog_post_open", { post_slug: post.slug, post_title: post.title })}
         className="group flex h-full flex-col rounded-2xl border border-border bg-surface p-6 transition-colors hover:border-primary/40"
       >
         <div className="flex items-center gap-2 text-xs text-muted">

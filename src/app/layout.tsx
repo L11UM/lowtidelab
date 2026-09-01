@@ -4,6 +4,7 @@ import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { ParticleField } from "@/components/particle-field";
 import { CommandPalette } from "@/components/command-palette";
+import { BlogAnalytics } from "@/components/blog-analytics";
 import "./globals.css";
 
 const inter = Inter({
@@ -71,6 +72,7 @@ export default function RootLayout({
         <div className="pointer-events-none fixed inset-0 -z-10 bg-radial-fade" />
         <div className="pointer-events-none fixed inset-0 -z-10 bg-grid opacity-40 [mask-image:radial-gradient(ellipse_at_top,black,transparent_70%)]" />
         <ParticleField />
+        <BlogAnalytics />
         <CommandPalette />
         <Navbar />
         <main>{children}</main>

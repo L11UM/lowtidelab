@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, Bot } from "lucide-react";
 import { Reveal } from "@/components/reveal";
+import { BlogCta } from "@/components/blog-cta";
 import { getAllPostSlugs, getPostBySlug } from "@/lib/posts";
 
 export function generateStaticParams() {
@@ -78,6 +79,10 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
           className="prose-invert mt-10 max-w-none text-white/90 [&_a]:text-primary-light [&_a]:underline [&_h2]:mt-8 [&_h2]:text-xl [&_h2]:font-semibold [&_h3]:mt-6 [&_h3]:text-lg [&_h3]:font-semibold [&_li]:my-1 [&_ol]:my-4 [&_ol]:list-decimal [&_ol]:pl-6 [&_p]:my-4 [&_p]:leading-relaxed [&_p]:text-white/80 [&_ul]:my-4 [&_ul]:list-disc [&_ul]:pl-6"
           dangerouslySetInnerHTML={{ __html: post.html }}
         />
+      </Reveal>
+
+      <Reveal delay={0.16}>
+        <BlogCta postSlug={post.slug} />
       </Reveal>
     </article>
   );
