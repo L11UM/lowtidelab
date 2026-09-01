@@ -25,10 +25,9 @@ interface Workday {
 
 const AGENT_ORDER = ["orchestrator", "researcher", "product", "builder", "growth", "operator", "critic"];
 
-export default function WorkdayDetailPage() {
-  const params = useParams<{ date: string; slot?: "night" }>();
+export function WorkdayDetailPage({ slot = "morning" }: { slot?: "morning" | "night" }) {
+  const params = useParams<{ date: string }>();
   const date = params.date;
-  const slot = params.slot === "night" ? "night" : "morning";
   const [workday, setWorkday] = useState<Workday | null>(null);
   const [tab, setTab] = useState<string | null>(null);
   const [rerunning, setRerunning] = useState<string | null>(null);
@@ -114,4 +113,8 @@ export default function WorkdayDetailPage() {
       </div>
     </div>
   );
+}
+
+export default function MorningWorkdayDetailPage() {
+  return <WorkdayDetailPage slot="morning" />;
 }
