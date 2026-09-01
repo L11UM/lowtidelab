@@ -5,6 +5,7 @@ import { rerunAgent } from "@/lib/run";
 import type { AgentKey } from "@/lib/agents/types";
 
 export const dynamic = "force-dynamic";
+export const maxDuration = 300;
 
 const Body = z.object({
   agent: z.enum(["researcher", "product", "builder", "growth", "operator", "critic"]),

@@ -87,6 +87,13 @@ async function log(workdayId: string, agent: string | null, level: "info" | "err
   await prisma.runLog.create({ data: { workdayId, agent, level, message, tokensIn, tokensOut } });
 }
 
+function sleep(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+// Spread sequential agent calls out to stay under free-tier requests-per-minute limits.
+const AGENT_STAGGER_MS = 4000;
+
 const AGENT_RUNNERS: Record<Exclude<AgentKey, "orchestrator" | "critic">, (ctx: AgentContext) => Promise<{ data: unknown; usage: { tokensIn: number; tokensOut: number }; markdown: string }>> = {
   researcher: runResearcher,
   product: runProduct,
@@ -167,6 +174,7 @@ export async function runWorkday(
 
       const ctx: AgentContext = { ...baseCtx, task: tasksForAgent.map((t) => `- (${t.priority}) ${t.task}`).join("\n") };
       emit({ type: "agent_start", agent: agentKey });
+      await sleep(AGENT_STAGGER_MS);
       try {
         const result = await AGENT_RUNNERS[agentKey](ctx);
         await saveArtifact(workday.id, agentKey, agentTypeFor(agentKey), result.data, result.markdown, (result.data as { citations?: unknown }).citations);
@@ -183,6 +191,7 @@ export async function runWorkday(
 
     // 3. Critic — cannot be skipped.
     emit({ type: "agent_start", agent: "critic" });
+    await sleep(AGENT_STAGGER_MS);
     let criticScore: number | null = null;
     try {
       const criticCtx: AgentContext = { ...baseCtx, task: `Here is all of today's work to critique:\n\n${artifactsMarkdown.join("\n\n")}` };
@@ -199,6 +208,7 @@ export async function runWorkday(
     }
 
     // 4. Synthesize the updated company brief (best-effort; does not fail the day).
+    await sleep(AGENT_STAGGER_MS);
     try {
       const prevBrief = await getLatestBrief();
       const briefResult = await synthesizeBrief(baseCtx, artifactsMarkdown.join("\n\n"));

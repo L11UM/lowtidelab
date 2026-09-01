@@ -3,6 +3,7 @@ import { sseResponse } from "@/lib/sse";
 import { runWorkday } from "@/lib/run";
 
 export const dynamic = "force-dynamic";
+export const maxDuration = 300;
 
 export async function POST(req: NextRequest) {
   const body = await req.json().catch(() => ({}));

@@ -3,7 +3,7 @@ import { expectedSessionToken, timingSafeEqual, SESSION_COOKIE } from "@/lib/aut
 
 // Single-owner app: everything requires a valid session except login and the
 // separately authenticated Vercel cron endpoint.
-const PUBLIC_PATHS = ["/login", "/api/auth/login", "/api/cron/daily", "/api/cron/night"];
+const PUBLIC_PATHS = ["/login", "/api/auth/login", "/api/cron/daily", "/api/cron/night", "/api/admin/repair-workday"];
 
 function secure(response: NextResponse) {
   response.headers.set("Cache-Control", "private, no-store, max-age=0");
