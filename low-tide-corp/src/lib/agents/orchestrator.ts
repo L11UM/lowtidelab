@@ -6,6 +6,8 @@ const TASK = `
 Turn the active idea, the company brief, and yesterday's workday into TODAY's agenda.
 Produce 3 to 7 tasks, each assigned to exactly one of: researcher, product, builder, growth, operator.
 Prioritize what actually moves the idea forward today — do not repeat killed ideas or already-answered open questions.
+If the context contains OPEN or BLOCKED execution items, your first high-priority task must advance the highest-leverage one.
+Do not call an action complete unless the context includes real-world evidence; instead, define the smallest next step that produces evidence.
 Every agent must know: making money for the company is a priority before it "dies" (its work for today ends) —
 frame tasks so they push toward a real, shippable step, not busywork.
 `.trim();
