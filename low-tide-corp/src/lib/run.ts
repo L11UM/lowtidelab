@@ -1,13 +1,13 @@
 import { prisma } from "@/lib/db";
 import { owner } from "@/lib/owner";
-import type { AgentContext, AgentKey } from "@/lib/agents/types";
-import { runOrchestrator } from "@/lib/agents/orchestrator";
-import { runResearcher } from "@/lib/agents/researcher";
-import { runProduct } from "@/lib/agents/product";
-import { runBuilder } from "@/lib/agents/builder";
-import { runGrowth } from "@/lib/agents/growth";
-import { runOperator } from "@/lib/agents/operator";
-import { runCritic } from "@/lib/agents/critic";
+import type { AgentContext, AgentKey, BuilderOutput, CriticOutput, GrowthOutput, OperatorOutput, ProductOutput, ResearcherOutput } from "@/lib/agents/types";
+import { renderOrchestratorMarkdown, runOrchestrator } from "@/lib/agents/orchestrator";
+import { renderResearcherMarkdown, runResearcher } from "@/lib/agents/researcher";
+import { renderProductMarkdown, runProduct } from "@/lib/agents/product";
+import { renderBuilderMarkdown, runBuilder } from "@/lib/agents/builder";
+import { renderGrowthMarkdown, runGrowth } from "@/lib/agents/growth";
+import { renderOperatorMarkdown, runOperator } from "@/lib/agents/operator";
+import { renderCriticMarkdown, runCritic } from "@/lib/agents/critic";
 import { synthesizeBrief } from "@/lib/brief";
 
 export type RunEvent =
@@ -134,6 +134,48 @@ const AGENT_RUNNERS: Record<Exclude<AgentKey, "orchestrator" | "critic">, (ctx: 
   operator: runOperator,
 };
 
+const fallbackAgenda = (ctx: AgentContext) => ({
+  agenda: (["researcher", "product", "builder", "growth", "operator"] as const).map((agent) => ({
+    agent,
+    task: `Create a conservative first-pass plan for ${ctx.idea.title}; record UNKNOWN for anything that requires external evidence.`,
+    priority: "medium" as const,
+  })),
+  rationale: "Provider unavailable. Use this evidence-first fallback agenda and validate each assumption manually.",
+});
+
+function fallbackFor(agent: Exclude<AgentKey, "orchestrator" | "critic">, ctx: AgentContext, error: string) {
+  const unknown = `Provider unavailable: ${error}`;
+  const common = { usage: { tokensIn: 0, tokensOut: 0 } };
+  if (agent === "researcher") {
+    const data: ResearcherOutput = { findings: "UNKNOWN — external research was unavailable.", competitors: [], risks: ["Validate demand and competitors manually."], citations: [], unknowns: [unknown] };
+    return { ...common, data, markdown: renderResearcherMarkdown(data) };
+  }
+  if (agent === "product") {
+    const data: ProductOutput = { problem: ctx.idea.oneLiner, icp: ctx.idea.audience || "UNKNOWN — define the first reachable customer segment.", mvpScope: ["Validate the smallest useful workflow manually."], userStories: [], notToBuild: ["Unvalidated features and paid infrastructure."], unknowns: [unknown] };
+    return { ...common, data, markdown: renderProductMarkdown(data) };
+  }
+  if (agent === "builder") {
+    const data: BuilderOutput = { specs: "UNKNOWN — provider unavailable; write the smallest testable implementation spec manually.", architecture: "Keep the first version serverless and dependency-light.", tickets: [], codePrompts: [], unknowns: [unknown] };
+    return { ...common, data, markdown: renderBuilderMarkdown(data) };
+  }
+  if (agent === "growth") {
+    const data: GrowthOutput = { positioning: ctx.idea.oneLiner, channelExperiment: { channel: "Direct founder conversations", hypothesis: "UNKNOWN — validate whether the audience reports this problem.", metric: "Count qualified replies." }, draftCopy: [], unknowns: [unknown] };
+    return { ...common, data, markdown: renderGrowthMarkdown(data) };
+  }
+  const data: OperatorOutput = { costs: [], legalRiskFlags: [], checklist: [{ item: "Manually validate the next action", done: false }], shipVsWait: "wait", rationale: "Provider unavailable; do not claim execution without evidence.", unknowns: [unknown] };
+  return { ...common, data, markdown: renderOperatorMarkdown(data) };
+}
+
+const fallbackCritic = (error: string): CriticOutput => ({
+  scores: { clarity: 1, novelty: 1, feasibility: 1, moat: 1 },
+  overall: 1,
+  weaknesses: ["UNKNOWN — provider unavailable; no automated critique was produced."],
+  requiredNextExperiment: "Manually validate the smallest customer-facing assumption.",
+  experiment: { hypothesis: "UNKNOWN — define the assumption before acting.", successMetric: "Record one real customer response.", killCriterion: "Stop if no reachable customer responds after a defined attempt." },
+  shippableNextAction: "Write down one evidence-backed customer question and ask it manually.",
+  verdict: `Fallback score only. Provider unavailable: ${error}`,
+});
+
 /**
  * Runs (or resumes) the workday for `date`. Idempotent: if a workday for that
  * date is already "done" and force is not set, it returns immediately without
@@ -201,7 +243,15 @@ export async function runWorkday(
   try {
     // 1. Orchestrator sets today's agenda.
     emit({ type: "agent_start", agent: "orchestrator" });
-    const orch = await runOrchestrator(baseCtx);
+    let orch;
+    try {
+      orch = await runOrchestrator(baseCtx);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      const data = fallbackAgenda(baseCtx);
+      orch = { data, usage: { tokensIn: 0, tokensOut: 0 }, markdown: renderOrchestratorMarkdown(data) };
+      await log(workday.id, "orchestrator", "error", `Fallback agenda used: ${message}`);
+    }
     await saveArtifact(workday.id, "orchestrator", "agenda", orch.data, orch.markdown);
     await log(workday.id, "orchestrator", "info", "Agenda created", orch.usage.tokensIn, orch.usage.tokensOut);
     emit({ type: "agent_done", agent: "orchestrator", markdown: orch.markdown });
@@ -225,9 +275,11 @@ export async function runWorkday(
         emit({ type: "agent_done", agent: agentKey, markdown: result.markdown });
       } catch (err) {
         const message = err instanceof Error ? err.message : String(err);
-        await saveArtifact(workday.id, agentKey, agentTypeFor(agentKey), {}, "", undefined, message);
-        await log(workday.id, agentKey, "error", message);
-        emit({ type: "agent_error", agent: agentKey, error: message });
+        const fallback = fallbackFor(agentKey, ctx, message);
+        await saveArtifact(workday.id, agentKey, agentTypeFor(agentKey), fallback.data, fallback.markdown);
+        await log(workday.id, agentKey, "error", `Fallback artifact used: ${message}`);
+        emit({ type: "agent_done", agent: agentKey, markdown: fallback.markdown });
+        artifactsMarkdown.push(`## ${agentKey}\n${fallback.markdown}`);
       }
     }
 
@@ -246,8 +298,13 @@ export async function runWorkday(
       emit({ type: "agent_done", agent: "critic", markdown: critic.markdown });
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
-      await log(workday.id, "critic", "error", message);
-      emit({ type: "agent_error", agent: "critic", error: message });
+      const fallback = fallbackCritic(message);
+      await saveArtifact(workday.id, "critic", "critique", fallback, renderCriticMarkdown(fallback));
+      await log(workday.id, "critic", "error", `Fallback critique used: ${message}`);
+      criticScore = fallback.overall;
+      await recordCriticAction(workday.id, fallback.shippableNextAction, fallback.experiment);
+      artifactsMarkdown.push(`## Critic\n${renderCriticMarkdown(fallback)}`);
+      emit({ type: "agent_done", agent: "critic", markdown: renderCriticMarkdown(fallback) });
     }
 
     // 4. Synthesize the updated company brief (best-effort; does not fail the day).
