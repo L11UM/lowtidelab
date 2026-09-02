@@ -97,6 +97,7 @@ async function callGemini(system: string, user: string): Promise<{ text: string;
   // then fall back through known-good alternatives instead of hard failing.
   const candidates = [
     process.env.GEMINI_MODEL,
+    "gemini-2.0-flash-lite",
     "gemini-3.6-flash",
     "gemini-2.0-flash",
     "gemini-flash-latest",
@@ -105,9 +106,9 @@ async function callGemini(system: string, user: string): Promise<{ text: string;
 
   let lastError: LlmError | null = null;
   for (const model of models) {
-    // Free-tier rate limits (429) are transient — wait and retry the same model
-    // a few times before giving up on it, instead of failing the whole agent.
-    for (let attempt = 0; attempt < 4; attempt++) {
+    // Free-tier rate limits and temporary overloads are transient. Retry briefly
+    // before moving to the next model so Gemini-only deployments can recover.
+    for (let attempt = 0; attempt < 3; attempt++) {
       const res = await fetch(
         `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${process.env.GEMINI_API_KEY}`,
         {
@@ -123,19 +124,19 @@ async function callGemini(system: string, user: string): Promise<{ text: string;
       if (!res.ok) {
         const body = await res.text();
         lastError = new LlmError(`Gemini request failed (${res.status}) for model "${model}": ${body.slice(0, 500)}`);
-        if (res.status === 429) {
+        if (res.status === 429 || res.status === 503) {
           const retryAfterHeader = Number(res.headers.get("retry-after"));
           const waitMs = Number.isFinite(retryAfterHeader) && retryAfterHeader > 0
             ? retryAfterHeader * 1000
-            : 2000 * 2 ** attempt; // 2s, 4s, 8s, 16s
-          if (attempt < 3) {
+            : 3000 * 2 ** attempt; // 3s, 6s, 12s
+          if (attempt < 2) {
             await sleep(waitMs);
             continue;
           }
           break; // exhausted retries on this model — try the next candidate
         }
-        // 404 (model retired) or 503 (overloaded) — try the next candidate model.
-        if (res.status === 404 || res.status === 503) break;
+        // 404 means the model has been retired — try the next candidate.
+        if (res.status === 404) break;
         throw lastError;
       }
       const data = await res.json();
