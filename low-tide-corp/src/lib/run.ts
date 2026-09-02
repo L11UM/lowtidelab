@@ -399,26 +399,51 @@ export async function rerunAgent(
     if (agentKey === "critic") {
       const artifacts = workday.artifacts.filter((a) => a.agent !== "critic");
       const combined = artifacts.map((a) => `## ${a.agent}\n${a.markdown}`).join("\n\n");
-      const result = await runCritic({ ...baseCtx, task: `Here is all of today's work to critique:\n\n${combined}` });
-      data = result.data;
-      markdown = result.markdown;
-      usage = result.usage;
-      await prisma.workday.update({ where: { id: workday.id }, data: { criticScore: result.data.overall } });
-      await recordCriticAction(workday.id, result.data.shippableNextAction, result.data.experiment);
+      try {
+        const result = await runCritic({ ...baseCtx, task: `Here is all of today's work to critique:\n\n${combined}` });
+        data = result.data;
+        markdown = result.markdown;
+        usage = result.usage;
+      } catch (err) {
+        const message = err instanceof Error ? err.message : String(err);
+        const fallback = fallbackCritic(message);
+        data = fallback;
+        markdown = renderCriticMarkdown(fallback);
+        await log(workday.id, "critic", "error", `Fallback critique used: ${message}`);
+      }
+      const criticData = data as CriticOutput;
+      await prisma.workday.update({ where: { id: workday.id }, data: { criticScore: criticData.overall } });
+      await recordCriticAction(workday.id, criticData.shippableNextAction, criticData.experiment);
     } else {
       const tasksForAgent = agenda.filter((a) => a.agent === agentKey);
       const task = tasksForAgent.length
         ? tasksForAgent.map((t) => `- (${t.priority}) ${t.task}`).join("\n")
         : `Redo your work for this idea given the current context.`;
-      const result = await AGENT_RUNNERS[agentKey]({ ...baseCtx, task });
-      data = result.data;
-      markdown = result.markdown;
-      usage = result.usage;
+      try {
+        const result = await AGENT_RUNNERS[agentKey]({ ...baseCtx, task });
+        data = result.data;
+        markdown = result.markdown;
+        usage = result.usage;
+      } catch (err) {
+        const message = err instanceof Error ? err.message : String(err);
+        const fallback = fallbackFor(agentKey, { ...baseCtx, task }, message);
+        data = fallback.data;
+        markdown = fallback.markdown;
+        await log(workday.id, agentKey, "error", `Fallback artifact used: ${message}`);
+      }
     }
 
     await prisma.artifact.deleteMany({ where: { workdayId: workday.id, agent: agentKey } });
     await saveArtifact(workday.id, agentKey, agentKey === "critic" ? "critique" : agentTypeFor(agentKey), data, markdown);
     await log(workday.id, agentKey, "info", "Rerun completed", usage.tokensIn, usage.tokensOut);
+
+    // A rerun can resolve the day's only blocker (e.g. the Critic finally scoring it) —
+    // reflect that in the overall status instead of leaving it stuck as "failed".
+    const refreshed = await prisma.workday.findUnique({ where: { id: workday.id } });
+    if (refreshed && refreshed.criticScore !== null && refreshed.status !== "done") {
+      await prisma.workday.update({ where: { id: workday.id }, data: { status: "done" } });
+    }
+
     emit({ type: "agent_done", agent: agentKey, markdown });
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
