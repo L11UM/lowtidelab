@@ -92,24 +92,35 @@ function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+const GEMINI_REQUEST_TIMEOUT_MS = 20000;
+
+async function fetchWithTimeout(input: RequestInfo | URL, init: RequestInit) {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), GEMINI_REQUEST_TIMEOUT_MS);
+  try {
+    return await fetch(input, { ...init, signal: controller.signal });
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
 async function callGemini(system: string, user: string): Promise<{ text: string; usage: TokenUsage }> {
   // Gemini model names get deprecated over time; try the configured model first,
   // then fall back through known-good alternatives instead of hard failing.
   const candidates = [
     process.env.GEMINI_MODEL,
+    "gemini-2.5-flash-lite",
     "gemini-2.0-flash-lite",
-    "gemini-3.6-flash",
-    "gemini-2.0-flash",
     "gemini-flash-latest",
   ].filter((m): m is string => Boolean(m));
   const models = [...new Set(candidates)];
 
   let lastError: LlmError | null = null;
   for (const model of models) {
-    // Free-tier rate limits and temporary overloads are transient. Retry briefly
-    // before moving to the next model so Gemini-only deployments can recover.
-    for (let attempt = 0; attempt < 3; attempt++) {
-      const res = await fetch(
+    // Rate limits may recover quickly; overloads should move on immediately so
+    // a Gemini-only workday stays within Vercel's execution limit.
+    for (let attempt = 0; attempt < 2; attempt++) {
+      const res = await fetchWithTimeout(
         `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${process.env.GEMINI_API_KEY}`,
         {
           method: "POST",
@@ -124,17 +135,18 @@ async function callGemini(system: string, user: string): Promise<{ text: string;
       if (!res.ok) {
         const body = await res.text();
         lastError = new LlmError(`Gemini request failed (${res.status}) for model "${model}": ${body.slice(0, 500)}`);
-        if (res.status === 429 || res.status === 503) {
+        if (res.status === 429) {
           const retryAfterHeader = Number(res.headers.get("retry-after"));
           const waitMs = Number.isFinite(retryAfterHeader) && retryAfterHeader > 0
             ? retryAfterHeader * 1000
-            : 3000 * 2 ** attempt; // 3s, 6s, 12s
-          if (attempt < 2) {
+            : 3000 * 2 ** attempt; // 3s, 6s
+          if (attempt < 1) {
             await sleep(waitMs);
             continue;
           }
           break; // exhausted retries on this model — try the next candidate
         }
+        if (res.status === 503) break;
         // 404 means the model has been retired — try the next candidate.
         if (res.status === 404) break;
         throw lastError;
