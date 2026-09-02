@@ -2,6 +2,7 @@
 // Single-owner auth: one shared password protects the whole app, no user accounts/DB needed.
 
 const encoder = new TextEncoder();
+const DEV_AUTH_SECRET = "low-tide-corp-dev-secret";
 
 async function hmacHex(secret: string, message: string): Promise<string> {
   const key = await crypto.subtle.importKey(
@@ -17,7 +18,7 @@ async function hmacHex(secret: string, message: string): Promise<string> {
 
 /** The expected session cookie value when correctly authenticated (stateless, derived from env secrets). */
 export async function expectedSessionToken(): Promise<string> {
-  const secret = process.env.AUTH_SECRET || "";
+  const secret = process.env.AUTH_SECRET || DEV_AUTH_SECRET;
   return hmacHex(secret, "low-tide-corp-session");
 }
 

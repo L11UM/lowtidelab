@@ -12,10 +12,20 @@ function provider() {
   return (process.env.LLM_PROVIDER || "gemini").toLowerCase();
 }
 
-function hasApiKey() {
-  if (provider() === "anthropic") return Boolean(process.env.ANTHROPIC_API_KEY);
-  if (provider() === "gemini") return Boolean(process.env.GEMINI_API_KEY);
+function hasApiKeyForChoice(choice: string) {
+  if (choice === "anthropic") return Boolean(process.env.ANTHROPIC_API_KEY);
+  if (choice === "gemini") return Boolean(process.env.GEMINI_API_KEY);
   return Boolean(process.env.OPENAI_API_KEY);
+}
+
+function providerPriority(): string[] {
+  const primary = provider();
+  const fallback = ["gemini", "openai", "anthropic"].filter((p) => p !== primary);
+  return [primary, ...fallback];
+}
+
+function hasApiKey() {
+  return providerPriority().some((choice) => hasApiKeyForChoice(choice));
 }
 
 async function callOpenAI(system: string, user: string): Promise<{ text: string; usage: TokenUsage }> {
@@ -150,9 +160,22 @@ function extractJson(text: string): string {
 }
 
 async function callProvider(system: string, user: string) {
-  if (provider() === "anthropic") return callAnthropic(system, user);
-  if (provider() === "gemini") return callGemini(system, user);
-  return callOpenAI(system, user);
+  const ordered = providerPriority();
+  let lastError: Error | null = null;
+
+  for (const choice of ordered) {
+    try {
+      if (!hasApiKeyForChoice(choice)) continue;
+      if (choice === "anthropic") return await callAnthropic(system, user);
+      if (choice === "gemini") return await callGemini(system, user);
+      return await callOpenAI(system, user);
+    } catch (err) {
+      lastError = err instanceof Error ? err : new Error(String(err));
+      if (choice === ordered[ordered.length - 1]) break;
+    }
+  }
+
+  throw lastError ?? new LlmError(`No working LLM provider available for ${provider()}`);
 }
 
 /**
@@ -166,7 +189,7 @@ export async function generateStructured<T extends z.ZodTypeAny>(
 ): Promise<{ data: z.infer<T>; usage: TokenUsage }> {
   if (!hasApiKey()) {
     throw new LlmError(
-      `No API key configured for provider "${provider()}". Set OPENAI_API_KEY or ANTHROPIC_API_KEY.`
+      `No API key configured for any supported provider. Set GEMINI_API_KEY, OPENAI_API_KEY, or ANTHROPIC_API_KEY.`
     );
   }
 
