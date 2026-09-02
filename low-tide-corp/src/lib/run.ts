@@ -124,6 +124,7 @@ function sleep(ms: number) {
 
 // Spread sequential agent calls out to stay under free-tier requests-per-minute limits.
 const AGENT_STAGGER_MS = 4000;
+const STALE_RUNNING_MS = 10 * 60 * 1000;
 
 const AGENT_RUNNERS: Record<Exclude<AgentKey, "orchestrator" | "critic">, (ctx: AgentContext) => Promise<{ data: unknown; usage: { tokensIn: number; tokensOut: number }; markdown: string }>> = {
   researcher: runResearcher,
@@ -160,8 +161,16 @@ export async function runWorkday(
     return;
   }
   if (workday && workday.status === "running") {
-    emit({ type: "workday_error", error: "This workday is already running." });
-    return;
+    const isStale = Date.now() - workday.updatedAt.getTime() > STALE_RUNNING_MS;
+    if (!isStale) {
+      emit({ type: "workday_error", error: "This workday is already running." });
+      return;
+    }
+    await prisma.artifact.deleteMany({ where: { workdayId: workday.id } });
+    workday = await prisma.workday.update({
+      where: { id: workday.id },
+      data: { status: "running", summary: null, criticScore: null },
+    });
   }
 
   if (workday && force) {
