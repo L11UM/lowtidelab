@@ -1,5 +1,6 @@
 # dependencies
 /node_modules
+/public/coastal-snapshot.json
 
 # next.js
 /.next/

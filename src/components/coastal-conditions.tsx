@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { AlertTriangle, ArrowUpRight, CloudLightning, MapPinned, Radio, Waves } from "lucide-react";
-import type { CoastalSnapshot } from "@/lib/coastal";
+import { readAlerts, type CoastalSnapshot } from "@/lib/coastal";
 
 const initial: CoastalSnapshot = {
   updatedAt: "",
@@ -21,21 +21,28 @@ export function CoastalConditions({ compact = false }: { compact?: boolean }) {
   useEffect(() => {
     let mounted = true;
     const loadSnapshot = async () => {
-      try {
-        const response = await fetch("/api/coastal", { cache: "no-store" });
-        if (!response.ok) throw new Error("Coastal data request failed");
-        const nextSnapshot: CoastalSnapshot = await response.json();
-        if (mounted) setSnapshot(nextSnapshot);
-      } catch {
-        if (mounted) {
-          setSnapshot((current) => ({
-            ...current,
-            stormFeedAvailable: false,
-            alertFeedAvailable: false,
-          }));
-        }
-      } finally {
-        if (mounted) setLoading(false);
+      const stormRequest = fetch("/coastal-snapshot.json", { cache: "no-store" })
+        .then(async (response) => response.ok ? await response.json() as CoastalSnapshot : null)
+        .catch(() => null);
+      const alertRequest = fetch("https://api.weather.gov/alerts/active?status=actual&message_type=alert", {
+        headers: { Accept: "application/geo+json, application/json" },
+        signal: AbortSignal.timeout(8000),
+      })
+        .then(async (response) => response.ok ? readAlerts(await response.json()) : null)
+        .catch(() => null);
+
+      const [stormSnapshot, alerts] = await Promise.all([stormRequest, alertRequest]);
+      if (mounted) {
+        setSnapshot((current) => ({
+          ...current,
+          ...(stormSnapshot ? {
+            updatedAt: stormSnapshot.updatedAt,
+            storms: stormSnapshot.storms,
+            stormFeedAvailable: stormSnapshot.stormFeedAvailable,
+          } : { stormFeedAvailable: false }),
+          ...(alerts ? { alerts, alertFeedAvailable: true } : { alertFeedAvailable: false }),
+        }));
+        setLoading(false);
       }
     };
 
@@ -61,14 +68,14 @@ export function CoastalConditions({ compact = false }: { compact?: boolean }) {
             What the coast is doing now.
           </h2>
           <p className="mt-2 max-w-xl text-sm leading-relaxed text-muted">
-            Active tropical systems and coastal alerts from NOAA. Refreshes every five minutes.
+            NWS alerts refresh every five minutes. The NHC storm snapshot updates with each site build.
           </p>
           <p role="status" className="mt-2 text-xs text-muted">
             {snapshot.updatedAt
-              ? `Last checked ${new Date(snapshot.updatedAt).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}`
+              ? `Storm snapshot ${new Date(snapshot.updatedAt).toLocaleString([], { dateStyle: "medium", timeStyle: "short" })}`
               : loading
-                ? "Connecting to live feeds…"
-                : "Live feed check unavailable."}
+                ? "Connecting to coastal feeds…"
+                : "Storm snapshot unavailable."}
           </p>
         </div>
         {compact && (
