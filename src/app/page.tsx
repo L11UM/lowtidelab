@@ -4,6 +4,7 @@ import { Reveal } from "@/components/reveal";
 import { ProjectCard } from "@/components/project-card";
 import { SupportCTA } from "@/components/support-cta";
 import { TideTracker } from "@/components/tide-tracker";
+import { CoastalConditions } from "@/components/coastal-conditions";
 import { projects, type Project } from "@/lib/data";
 
 export default function HomePage() {
@@ -14,6 +15,9 @@ export default function HomePage() {
   return (
     <>
       <Hero />
+      <section className="container-x pb-12">
+        <CoastalConditions compact />
+      </section>
       <FeaturedProjects projects={highlighted} />
       <SupportSection />
     </>

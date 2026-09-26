@@ -29,6 +29,15 @@ export const projects: Project[] = [
     featured: true,
   },
   {
+    slug: "coastal-conditions",
+    title: "Coastal Conditions",
+    description:
+      "A live NOAA/NWS view of active tropical systems and coastal alerts, with the tide tracker still close at hand.",
+    tags: ["NOAA", "Storms", "Alerts"],
+    liveUrl: "/coast",
+    featured: true,
+  },
+  {
     slug: "flow-field-drift",
     title: "Flow Field Drift",
     description:
