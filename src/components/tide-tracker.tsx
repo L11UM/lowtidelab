@@ -2,56 +2,33 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
-import { ArrowDown, ArrowUp, Loader2, Waves } from "lucide-react";
-import { fetchTideData, type TideData } from "@/lib/tides";
+import { ArrowDown, ArrowUp, Loader2, MapPin, Waves } from "lucide-react";
+import { defaultTideStation, fetchTideData, tideStations, type TideData, type TideStation } from "@/lib/tides";
 
 const WIDTH = 400;
 const HEIGHT = 150;
 const PAD_Y = 16;
 
-// Deterministic sine-wave fallback so the widget never shows a blank/broken state.
-function buildFallbackData(): TideData {
-  const now = new Date();
-  const start = new Date(now);
-  start.setHours(0, 0, 0, 0);
-
-  const points = Array.from({ length: 96 }, (_, i) => {
-    const time = new Date(start.getTime() + i * 15 * 60 * 1000);
-    const hours = i / 4;
-    const feet = 3 + 2.2 * Math.sin((hours / 12.4) * Math.PI * 2);
-    return { time, feet };
-  });
-
-  const hiLo: TideData["hiLo"] = [];
-  for (let i = 1; i < points.length - 1; i++) {
-    const prev = points[i - 1].feet;
-    const cur = points[i].feet;
-    const next = points[i + 1].feet;
-    if (cur > prev && cur > next) hiLo.push({ ...points[i], type: "H" });
-    if (cur < prev && cur < next) hiLo.push({ ...points[i], type: "L" });
-  }
-
-  return { points, hiLo, stationName: "Simulated data" };
-}
-
-export function TideTracker() {
+export function TideTracker({ fullWidth = false }: { fullWidth?: boolean }) {
   const [data, setData] = useState<TideData | null>(null);
-  const [isLive, setIsLive] = useState(true);
+  const [station, setStation] = useState<TideStation>(defaultTideStation);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
+    setLoading(true);
+    setError(false);
+    setData(null);
 
-    fetchTideData()
+    fetchTideData(station)
       .then((result) => {
         if (cancelled) return;
         setData(result);
-        setIsLive(true);
       })
       .catch(() => {
         if (cancelled) return;
-        setData(buildFallbackData());
-        setIsLive(false);
+        setError(true);
       })
       .finally(() => {
         if (!cancelled) setLoading(false);
@@ -60,7 +37,7 @@ export function TideTracker() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [station]);
 
   const chart = useMemo(() => {
     if (!data || data.points.length === 0) return null;
@@ -110,105 +87,59 @@ export function TideTracker() {
   }, [data]);
 
   return (
-    <div className="glass w-full max-w-md overflow-hidden rounded-2xl p-6 shadow-glow-sm">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/15 text-primary-light">
-            <Waves className="h-4 w-4" />
-          </span>
-          <div>
-            <p className="text-sm font-semibold text-white">Redondo Beach, CA</p>
-            <p className="flex items-center gap-1.5 text-xs text-muted">
-              <span
-                className={`h-1.5 w-1.5 rounded-full ${isLive ? "bg-accent" : "bg-muted"}`}
-              />
-              {isLive ? "Live tide" : "Simulated tide"}
-            </p>
+    <section className={`glass w-full overflow-hidden rounded-2xl p-5 shadow-glow-sm sm:p-6 ${fullWidth ? "" : "max-w-md"}`}>
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-primary-light">Tide telemetry · NOAA CO-OPS</p>
+          <div className="mt-3 flex items-center gap-2 text-sm text-white">
+            <MapPin className="h-4 w-4 text-primary-light" />
+            <span>{data?.stationName ?? station.name}</span>
           </div>
+          <label htmlFor="tide-station" className="sr-only">Select tide station</label>
+          <select
+            id="tide-station"
+            value={station.id}
+            onChange={(event) => {
+              const nextStation = tideStations.find((item) => item.id === event.target.value);
+              if (nextStation) setStation(nextStation);
+            }}
+            className="mt-3 max-w-full rounded-md border border-white/15 bg-[#102124] px-3 py-2 text-sm text-white outline-none focus:border-primary-light"
+          >
+            {tideStations.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}
+          </select>
         </div>
-        {chart && (
-          <div className="text-right">
-            <p className="text-lg font-semibold text-white">{chart.currentFeet.toFixed(1)} ft</p>
-            <p
-              className={`flex items-center justify-end gap-1 text-xs ${
-                chart.trendUp ? "text-accent-light" : "text-primary-light"
-              }`}
-            >
-              {chart.trendUp ? (
-                <ArrowUp className="h-3 w-3" />
-              ) : (
-                <ArrowDown className="h-3 w-3" />
-              )}
+        <div className="min-w-24 text-right">
+          <p className="text-[11px] uppercase tracking-[0.14em] text-muted">Predicted now</p>
+          {chart ? <>
+            <p className="mt-1 text-3xl font-semibold tabular-nums text-white">{chart.currentFeet.toFixed(1)}<span className="ml-1 text-sm font-normal text-muted">ft</span></p>
+            <p className={`mt-1 flex items-center justify-end gap-1 text-xs ${chart.trendUp ? "text-accent-light" : "text-primary-light"}`}>
+              {chart.trendUp ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />}
               {chart.trendUp ? "Rising" : "Falling"}
             </p>
-          </div>
-        )}
+          </> : <p className="mt-2 text-sm text-muted">{loading ? "Loading" : "Unavailable"}</p>}
+        </div>
       </div>
 
-      <div className="relative mt-4 h-[150px] w-full">
-        {loading && !chart ? (
-          <div className="flex h-full items-center justify-center text-muted">
-            <Loader2 className="h-5 w-5 animate-spin" />
-          </div>
-        ) : chart ? (
-          <svg
-            viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
-            preserveAspectRatio="none"
-            className="h-full w-full"
-          >
-            <defs>
-              <linearGradient id="tide-fill" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#5fa8a0" stopOpacity="0.45" />
-                <stop offset="100%" stopColor="#5fa8a0" stopOpacity="0.02" />
-              </linearGradient>
-            </defs>
-
-            <motion.path
-              d={chart.areaPath}
-              fill="url(#tide-fill)"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 1 }}
-            />
-            <motion.path
-              d={chart.linePath}
-              fill="none"
-              stroke="#8fc9c1"
-              strokeWidth={2}
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              initial={{ pathLength: 0 }}
-              animate={{ pathLength: 1 }}
-              transition={{ duration: 1.8, ease: [0.21, 0.47, 0.32, 0.98] }}
-            />
-
-            <motion.circle
-              cx={chart.nowX}
-              cy={chart.nowY}
-              r={10}
-              fill="#8fc9c1"
-              opacity={0.18}
-              animate={{ scale: [1, 1.6, 1], opacity: [0.28, 0, 0.28] }}
-              transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut" }}
-              style={{ transformOrigin: `${chart.nowX}px ${chart.nowY}px` }}
-            />
-            <circle cx={chart.nowX} cy={chart.nowY} r={4} fill="#e8c39a" />
-          </svg>
-        ) : null}
+      <div className={`relative mt-5 w-full ${fullWidth ? "h-[240px]" : "h-[150px]"}`}>
+        {loading ? <div className="flex h-full items-center justify-center gap-2 text-sm text-muted"><Loader2 className="h-4 w-4 animate-spin" />Reading station data</div>
+          : error ? <div className="flex h-full items-center justify-center text-sm text-accent-light">NOAA predictions are temporarily unavailable for this station.</div>
+            : chart ? <svg viewBox={`0 0 ${WIDTH} ${HEIGHT}`} preserveAspectRatio="none" className="h-full w-full" role="img" aria-label={`Tide prediction chart for ${data?.stationName}`}>
+              <defs><linearGradient id="tide-fill" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#5fa8a0" stopOpacity="0.45" /><stop offset="100%" stopColor="#5fa8a0" stopOpacity="0.02" /></linearGradient></defs>
+              <path d={chart.areaPath} fill="url(#tide-fill)" />
+              <motion.path d={chart.linePath} fill="none" stroke="#8fc9c1" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 1.4, ease: [0.21, 0.47, 0.32, 0.98] }} />
+              <motion.circle cx={chart.nowX} cy={chart.nowY} r={10} fill="#8fc9c1" opacity={0.18} animate={{ scale: [1, 1.6, 1], opacity: [0.28, 0, 0.28] }} transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut" }} style={{ transformOrigin: `${chart.nowX}px ${chart.nowY}px` }} />
+              <circle cx={chart.nowX} cy={chart.nowY} r={4} fill="#e8c39a" />
+            </svg> : <div className="flex h-full items-center justify-center text-sm text-muted">No tide predictions for this station.</div>}
       </div>
+      {data && data.points.length > 1 && <div className="mt-1 flex justify-between text-[10px] tabular-nums text-muted">
+        <span>{data.points[0].time.toLocaleTimeString([], { hour: "numeric", minute: "2-digit", timeZone: data.timeZone })}</span>
+        <span>{data.points[data.points.length - 1].time.toLocaleTimeString([], { hour: "numeric", minute: "2-digit", timeZone: data.timeZone })} local</span>
+      </div>}
 
-      {chart?.nextEvent && (
-        <p className="mt-2 text-xs text-muted">
-          Next {chart.nextEvent.type === "H" ? "high" : "low"} tide at{" "}
-          <span className="text-white/80">
-            {chart.nextEvent.time.toLocaleTimeString(undefined, {
-              hour: "numeric",
-              minute: "2-digit",
-            })}
-          </span>{" "}
-          ({chart.nextEvent.feet.toFixed(1)} ft)
-        </p>
-      )}
-    </div>
+      <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-white/10 pt-4 text-sm">
+        <span className="inline-flex items-center gap-2 text-muted"><Waves className="h-4 w-4 text-primary-light" /> Next tide</span>
+        {chart?.nextEvent && data ? <span className="font-medium text-white">{chart.nextEvent.type === "H" ? "High" : "Low"} · {chart.nextEvent.time.toLocaleTimeString([], { hour: "numeric", minute: "2-digit", timeZone: data.timeZone })} local · {chart.nextEvent.feet.toFixed(1)} ft</span> : <span className="text-muted">{loading ? "Calculating…" : "Unavailable"}</span>}
+      </div>
+    </section>
   );
 }

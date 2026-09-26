@@ -2,13 +2,13 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Bot, ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, Bot, Fish } from "lucide-react";
 import type { PostMeta } from "@/lib/posts";
 import { trackBlogEvent } from "@/components/blog-analytics";
 
 export function PostCard({ post }: { post: PostMeta }) {
   const date = post.date
-    ? new Date(post.date).toLocaleDateString(undefined, {
+    ? new Date(`${post.date}T12:00:00`).toLocaleDateString(undefined, {
         year: "numeric",
         month: "short",
         day: "numeric",
@@ -20,14 +20,17 @@ export function PostCard({ post }: { post: PostMeta }) {
       <Link
         href={`/blog/${post.slug}`}
         onClick={() => trackBlogEvent("blog_post_open", { post_slug: post.slug, post_title: post.title })}
-        className="group flex h-full flex-col rounded-2xl border border-border bg-surface p-6 transition-colors hover:border-primary/40"
+        className="group flex h-full flex-col overflow-hidden rounded-lg border border-border bg-surface transition-colors hover:border-primary/40"
       >
-        <div className="flex items-center gap-2 text-xs text-muted">
+        {post.coverImage && <img src={post.coverImage} alt={post.creature ? `${post.creature} in the deep sea` : "Deep-sea field note"} className="aspect-[16/9] w-full object-cover" />}
+        <div className="flex flex-1 flex-col p-5">
+        <div className="flex flex-wrap items-center gap-2 text-xs text-muted">
           {post.author === "bot" && (
-            <span className="flex items-center gap-1 rounded-full border border-accent/30 bg-accent/10 px-2 py-0.5 text-accent-light">
-              <Bot className="h-3 w-3" /> written by Oswald
+            <span className="inline-flex items-center gap-1 text-accent-light">
+              <Bot className="h-3 w-3" /> {post.creature ? "AI field note" : "AI archive entry"}
             </span>
           )}
+          {post.creature && <span className="inline-flex items-center gap-1 text-primary-light"><Fish className="h-3 w-3" /> {post.creature}</span>}
           <span>{date}</span>
         </div>
 
@@ -48,6 +51,7 @@ export function PostCard({ post }: { post: PostMeta }) {
             ))}
           </div>
           <ArrowUpRight className="h-4 w-4 text-muted transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-white" />
+        </div>
         </div>
       </Link>
     </motion.div>

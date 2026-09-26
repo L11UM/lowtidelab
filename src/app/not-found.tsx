@@ -5,7 +5,7 @@ export default function NotFound() {
     <section className="container-x flex min-h-[70vh] flex-col items-center justify-center text-center">
       <h1 className="text-5xl font-semibold tracking-tight text-gradient">404</h1>
       <p className="mt-4 max-w-sm text-muted">
-        This page doesn&apos;t exist — maybe it&apos;s still an idea in the Lab.
+        This signal is outside our charts. Return to the ocean intelligence desk.
       </p>
       <Link
         href="/"

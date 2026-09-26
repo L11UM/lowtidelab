@@ -9,10 +9,9 @@ import { CommandPaletteTrigger } from "@/components/command-palette";
 
 const links = [
   { href: "/", label: "Home" },
-  { href: "/projects", label: "Projects" },
-  { href: "/lab", label: "Lab" },
-  { href: "/blog", label: "Blog" },
-  { href: "/about", label: "About" },
+  { href: "/tides", label: "Tides" },
+  { href: "/coast", label: "Conditions" },
+  { href: "/blog", label: "Creature Log" },
 ];
 
 export function Navbar() {

@@ -13,6 +13,9 @@ export type PostMeta = {
   excerpt: string;
   tags: string[];
   author: string;
+  creature: string;
+  scientificName: string;
+  coverImage: string;
 };
 
 export type Post = PostMeta & {
@@ -43,6 +46,9 @@ export function getAllPosts(): PostMeta[] {
         excerpt: data.excerpt ?? "",
         tags: data.tags ?? [],
         author: data.author ?? "Liam",
+        creature: data.creature ?? "",
+        scientificName: data.scientific_name ?? "",
+        coverImage: data.cover_image ?? "",
       };
     })
     .sort((a, b) => (a.date < b.date ? 1 : -1));
@@ -63,6 +69,9 @@ export function getPostBySlug(slug: string): Post | null {
     excerpt: data.excerpt ?? "",
     tags: data.tags ?? [],
     author: data.author ?? "Liam",
+    creature: data.creature ?? "",
+    scientificName: data.scientific_name ?? "",
+    coverImage: data.cover_image ?? "",
     html,
   };
 }

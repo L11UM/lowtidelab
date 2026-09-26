@@ -1,49 +1,16 @@
 import Link from "next/link";
-import { Github, Linkedin, Mail, Twitter } from "lucide-react";
-
-const socials = [
-  { href: "https://github.com", label: "GitHub", icon: Github },
-  { href: "https://linkedin.com", label: "LinkedIn", icon: Linkedin },
-  { href: "https://twitter.com", label: "Twitter", icon: Twitter },
-  { href: "mailto:hello@lowtidelab.dev", label: "Email", icon: Mail },
-];
+import { Anchor } from "lucide-react";
 
 export function Footer() {
   return (
     <footer className="border-t border-border/60">
-      <div className="container-x flex flex-col items-center justify-between gap-6 py-10 sm:flex-row">
-        <div className="text-center text-sm text-muted sm:text-left">
-          <p>&copy; {new Date().getFullYear()} Low Tide Lab. Built with Next.js &amp; Tailwind.</p>
-        </div>
-
-        <div className="flex items-center gap-2">
-          {socials.map(({ href, label, icon: Icon }) => (
-            <Link
-              key={label}
-              href={href}
-              target="_blank"
-              rel="noreferrer noopener"
-              aria-label={label}
-              className="flex h-9 w-9 items-center justify-center rounded-full border border-border text-muted transition-colors hover:border-primary/50 hover:text-white"
-            >
-              <Icon className="h-4 w-4" />
-            </Link>
-          ))}
-        </div>
-
-        <nav className="flex items-center gap-5 text-sm text-muted">
-          <Link href="/projects" className="hover:text-white">
-            Projects
-          </Link>
-          <Link href="/lab" className="hover:text-white">
-            Lab
-          </Link>
-          <Link href="/blog" className="hover:text-white">
-            Blog
-          </Link>
-          <Link href="/about" className="hover:text-white">
-            About
-          </Link>
+      <div className="container-x flex flex-col justify-between gap-5 py-7 sm:flex-row sm:items-center">
+        <p className="inline-flex items-center gap-2 text-xs text-muted"><Anchor className="h-4 w-4 text-primary-light" /> Low Tide Lab · Ocean intelligence for curious crews</p>
+        <nav aria-label="Footer navigation" className="flex flex-wrap gap-x-5 gap-y-2 text-xs text-muted">
+          <Link href="/tides" className="hover:text-white">Tides</Link>
+          <Link href="/coast" className="hover:text-white">Conditions</Link>
+          <Link href="/blog" className="hover:text-white">Creature Log</Link>
+          <Link href="/about" className="hover:text-white">Mission</Link>
         </nav>
       </div>
     </footer>

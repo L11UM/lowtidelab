@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
     inputs:
       topic:
-        description: "Optional: force today's post to be about a specific topic"
+        description: "Optional: force today's field note to cover a specific deep-sea creature"
         required: false
         type: string
       force:

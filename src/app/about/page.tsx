@@ -1,85 +1,45 @@
 import type { Metadata } from "next";
-import { Reveal } from "@/components/reveal";
-import { SupportCTA } from "@/components/support-cta";
-import { Code2, Rocket, Sparkles, Waves } from "lucide-react";
+import { Compass, Radio, Waves } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "About",
-  description: "What Low Tide Lab is, and what it's for.",
+  title: "Mission Brief",
+  description: "How Low Tide Lab gathers ocean intelligence and where its data comes from.",
 };
 
-const highlights = [
-  {
-    icon: Code2,
-    title: "What this is",
-    description:
-      "A home base for full-stack products, tools, and interfaces — built, shipped, and documented in the open.",
-  },
-  {
-    icon: Sparkles,
-    title: "What we're into",
-    description:
-      "AI tooling, developer experience, and interfaces that feel fast and alive.",
-  },
-  {
-    icon: Rocket,
-    title: "What's active right now",
-    description:
-      "RocketGPT — an AI chatbot built from the ground up, plus whatever's next in the Lab.",
-  },
+const sources = [
+  { label: "NOAA CO-OPS", detail: "Tide predictions from coastal stations.", href: "https://api.tidesandcurrents.noaa.gov/api/prod/" },
+  { label: "National Hurricane Center", detail: "Active tropical systems and advisories.", href: "https://www.nhc.noaa.gov/" },
+  { label: "National Weather Service", detail: "Current watches, warnings, and alerts.", href: "https://api.weather.gov/" },
+  { label: "MBARI", detail: "Deep-sea natural history and research.", href: "https://www.mbari.org/education/animals-of-the-deep/" },
 ];
 
 export default function AboutPage() {
   return (
-    <section className="container-x py-24">
-      <Reveal>
-        <span className="mb-4 inline-flex w-fit items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-xs font-medium text-primary-light">
-          <Waves className="h-3.5 w-3.5" />
-          The brand behind the builds
-        </span>
-        <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">About Low Tide Lab</h1>
-        <p className="mt-6 max-w-2xl text-lg leading-relaxed text-muted">
-          Low Tide Lab is a home base for ideas, experiments, and things worth
-          building. Some of it ships as real products, some of it stays a
-          half-formed idea in the Lab, and some of it comes from{" "}
-          <span className="font-medium text-white">Oswald</span>, our resident
-          AI, who writes a daily blog post and builds a new interactive Lab
-          experiment every week — all under one roof.
-        </p>
-        <p className="mt-4 max-w-2xl leading-relaxed text-muted">
-          Right now most of the energy here is going into{" "}
-          <span className="font-medium text-white">RocketGPT</span>, an AI
-          chatbot built end-to-end — from the model layer to the interface
-          you can try on the home page.
-        </p>
-      </Reveal>
+    <section className="container-x py-12 sm:py-16">
+      <p className="inline-flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.18em] text-primary-light"><Compass className="h-3.5 w-3.5" /> Mission brief · Low Tide Lab</p>
+      <h1 className="mt-3 text-3xl font-semibold tracking-tight text-white sm:text-4xl">Observe more. Assume less.</h1>
+      <p className="mt-4 max-w-2xl text-sm leading-relaxed text-muted">Low Tide Lab is an ocean-intelligence desk built around public marine data and natural history. It tracks the pull of the tide, watches active coastal conditions, and keeps a daily log of life in the deep.</p>
 
-      <div className="mt-16 grid gap-6 sm:grid-cols-3">
-        {highlights.map(({ icon: Icon, title, description }, i) => (
-          <Reveal key={title} delay={i * 0.08}>
-            <div className="h-full rounded-2xl border border-border bg-surface p-6">
-              <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/15 text-primary-light">
-                <Icon className="h-5 w-5" />
-              </span>
-              <h3 className="mt-4 font-semibold tracking-tight">{title}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-muted">{description}</p>
-            </div>
-          </Reveal>
-        ))}
+      <div className="mt-10 grid gap-4 sm:grid-cols-2">
+        <section className="rounded-lg border border-border bg-surface p-5">
+          <Waves className="h-5 w-5 text-primary-light" />
+          <h2 className="mt-4 font-semibold text-white">Signals, not certainty</h2>
+          <p className="mt-2 text-sm leading-relaxed text-muted">Measurements and alerts are shown with their source and update cadence. NOAA tide predictions describe expected water levels, not a substitute for local safety guidance.</p>
+        </section>
+        <section className="rounded-lg border border-border bg-surface p-5">
+          <Radio className="h-5 w-5 text-accent-light" />
+          <h2 className="mt-4 font-semibold text-white">A small crew, open waters</h2>
+          <p className="mt-2 text-sm leading-relaxed text-muted">The dashboard uses public feeds and published research. Daily creature notes are automated and identify their references so the trail stays inspectable.</p>
+        </section>
       </div>
 
-      <Reveal delay={0.2}>
-        <p className="mt-10 text-sm text-muted">
-          Built and maintained by{" "}
-          <span className="font-medium text-white">Liam Thompson</span>.
-        </p>
-      </Reveal>
-
-      <div className="mt-16">
-        <Reveal>
-          <SupportCTA />
-        </Reveal>
-      </div>
+      <h2 className="mt-12 text-xs font-medium uppercase tracking-[0.16em] text-muted">Signal sources</h2>
+      <ul className="mt-3 divide-y divide-white/10 border-y border-white/10">
+        {sources.map((source) => <li key={source.label} className="flex flex-col gap-1 py-3 sm:flex-row sm:items-center sm:justify-between">
+          <a href={source.href} target="_blank" rel="noreferrer" className="text-sm font-medium text-primary-light hover:text-white">{source.label}</a>
+          <span className="text-xs text-muted">{source.detail}</span>
+        </li>)}
+      </ul>
     </section>
   );
 }

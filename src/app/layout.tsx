@@ -24,12 +24,12 @@ const siteUrl = "https://lowtidelab.dev";
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "Low Tide Lab — Ideas, Experiments & RocketGPT",
+    default: "Low Tide Lab — Ocean Intelligence",
     template: "%s — Low Tide Lab",
   },
   description:
-    "Low Tide Lab is a home base for ideas, experiments, and builds — including RocketGPT, an AI chatbot, and a daily AI-written blog.",
-  keywords: ["Low Tide Lab", "RocketGPT", "AI chatbot", "lab", "experiments", "Next.js"],
+    "Tides, coastal conditions, and deep-sea life from Low Tide Lab's ocean intelligence dashboard.",
+  keywords: ["Low Tide Lab", "ocean", "tides", "deep sea", "marine life", "coastal conditions"],
   authors: [{ name: "Low Tide Lab" }],
   creator: "Low Tide Lab",
   icons: {
@@ -40,17 +40,15 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     url: siteUrl,
-    title: "Low Tide Lab — Ideas, Experiments & RocketGPT",
-    description:
-      "Low Tide Lab is a home base for ideas, experiments, and builds — including RocketGPT, an AI chatbot, and a daily AI-written blog.",
+    title: "Low Tide Lab — Ocean Intelligence",
+    description: "Tides, coastal conditions, and deep-sea life from the Low Tide Lab submarine desk.",
     siteName: "Low Tide Lab",
     images: [{ url: "/logo.png" }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Low Tide Lab — Ideas, Experiments & RocketGPT",
-    description:
-      "Low Tide Lab is a home base for ideas, experiments, and builds — including RocketGPT, an AI chatbot, and a daily AI-written blog.",
+    title: "Low Tide Lab — Ocean Intelligence",
+    description: "Tides, coastal conditions, and deep-sea life from the Low Tide Lab submarine desk.",
     images: ["/logo.png"],
   },
   robots: {
