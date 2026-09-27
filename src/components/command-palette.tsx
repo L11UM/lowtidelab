@@ -10,6 +10,7 @@ import {
   Radio,
   Fish,
   Video,
+  Map as MapIcon,
   Mail,
   ArrowRight,
   Search,
@@ -52,6 +53,13 @@ export function CommandPalette() {
         icon: Video,
         action: () => router.push("/piers"),
         keywords: "live cam webcam pier redondo video",
+      },
+      {
+        id: "map",
+        label: "Open coast chart",
+        icon: MapIcon,
+        action: () => router.push("/map"),
+        keywords: "map chart stations storms piers",
       },
       {
         id: "conditions",

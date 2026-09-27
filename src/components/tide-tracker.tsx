@@ -16,6 +16,13 @@ export function TideTracker({ fullWidth = false }: { fullWidth?: boolean }) {
   const [error, setError] = useState(false);
 
   useEffect(() => {
+    if (!fullWidth) return;
+    const requested = new URLSearchParams(window.location.search).get("station");
+    const match = tideStations.find((item) => item.id === requested);
+    if (match) setStation(match);
+  }, [fullWidth]);
+
+  useEffect(() => {
     let cancelled = false;
     setLoading(true);
     setError(false);

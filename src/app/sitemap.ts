@@ -4,7 +4,7 @@ import { getAllPostSlugs } from "@/lib/posts";
 const siteUrl = "https://lowtidelab.dev";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const routes = ["", "/tides", "/piers", "/coast", "/blog", "/lab", "/projects", "/about"];
+  const routes = ["", "/tides", "/piers", "/map", "/coast", "/blog", "/lab", "/projects", "/about"];
 
   return [...routes, ...getAllPostSlugs().map((slug) => `/blog/${slug}`)].map((route) => ({
     url: `${siteUrl}${route}`,

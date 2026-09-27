@@ -17,6 +17,7 @@ Open [http://localhost:3000](http://localhost:3000). The `predev` hook creates a
 
 - `/` — ocean dashboard with tide telemetry, coastal watch, and the latest creature field note.
 - `/tides` — NOAA predictions for eight selectable U.S. coastal stations.
+- `/map` — pier cameras, NOAA tide stations, and active tropical systems on one chart.
 - `/coast` — active NHC systems and current NWS alerts.
 - `/blog` — Creature Log. Older general-interest entries are preserved under Earlier Transmissions.
 - `/lab` — Abyssal Index with species habitat and depth notes.

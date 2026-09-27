@@ -5,14 +5,16 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { clsx } from "clsx";
+import { Fish, Home, Map as MapIcon, Radio, Video, Waves } from "lucide-react";
 import { CommandPaletteTrigger } from "@/components/command-palette";
 
 const links = [
-  { href: "/", label: "Home" },
-  { href: "/tides", label: "Tides" },
-  { href: "/piers", label: "Piers" },
-  { href: "/coast", label: "Conditions" },
-  { href: "/blog", label: "Creature Log" },
+  { href: "/", label: "Home", icon: Home },
+  { href: "/tides", label: "Tides", icon: Waves },
+  { href: "/piers", label: "Piers", icon: Video },
+  { href: "/map", label: "Map", icon: MapIcon },
+  { href: "/coast", label: "Conditions", icon: Radio },
+  { href: "/blog", label: "Creature Log", icon: Fish },
 ];
 
 export function Navbar() {
@@ -45,14 +47,17 @@ export function Navbar() {
         <div className="flex items-center gap-2 sm:gap-4">
           <ul className="flex items-center gap-1 sm:gap-2">
           {links.map((link) => {
+            const Icon = link.icon;
             const active =
               link.href === "/" ? pathname === "/" : pathname?.startsWith(link.href);
             return (
               <li key={link.href} className="relative">
                 <Link
                   href={link.href}
+                  aria-label={link.label}
+                  title={link.label}
                   className={clsx(
-                    "relative block rounded-full px-3 py-1.5 text-sm font-medium transition-colors sm:px-4",
+                    "relative flex items-center justify-center gap-2 rounded-full px-2 py-1.5 text-sm font-medium transition-colors sm:px-4",
                     active ? "text-white" : "text-muted hover:text-white"
                   )}
                 >
@@ -63,7 +68,8 @@ export function Navbar() {
                       transition={{ type: "spring", stiffness: 350, damping: 30 }}
                     />
                   )}
-                  <span className="relative">{link.label}</span>
+                  <Icon className="relative h-4 w-4 sm:hidden" aria-hidden="true" />
+                  <span className="relative hidden sm:inline">{link.label}</span>
                 </Link>
               </li>
             );

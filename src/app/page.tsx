@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowUpRight, Compass, Radio, Video, Waves } from "lucide-react";
+import { ArrowUpRight, Compass, Map as MapIcon, Radio, Video, Waves } from "lucide-react";
 import { CoastalConditions } from "@/components/coastal-conditions";
 import { CreatureSpotlight } from "@/components/creature-spotlight";
 import { TideTracker } from "@/components/tide-tracker";
@@ -9,6 +9,7 @@ import { getAllPosts } from "@/lib/posts";
 const quickLinks = [
   { href: "/tides", label: "Tide tables", icon: Waves },
   { href: "/piers", label: "Pier scope", icon: Video },
+  { href: "/map", label: "Coast chart", icon: MapIcon },
   { href: "/coast", label: "Coastal watch", icon: Radio },
   { href: "/blog", label: "Creature log", icon: Compass },
 ];

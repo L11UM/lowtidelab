@@ -65,6 +65,12 @@ export function PierScope() {
   }, []);
 
   useEffect(() => {
+    const requested = new URLSearchParams(window.location.search).get("cam");
+    const match = pierCams.findIndex((item) => item.id === requested);
+    if (match >= 0) setIndex(match);
+  }, []);
+
+  useEffect(() => {
     if (!cruising || wall) return;
     const id = window.setInterval(() => setCountdown((seconds) => seconds - 1), 1000);
     return () => window.clearInterval(id);
