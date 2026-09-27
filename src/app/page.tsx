@@ -2,7 +2,7 @@ import Link from "next/link";
 import { ArrowUpRight, Compass, Map as MapIcon, Radio, Video, Waves } from "lucide-react";
 import { CoastalConditions } from "@/components/coastal-conditions";
 import { CreatureSpotlight } from "@/components/creature-spotlight";
-import { TideTracker } from "@/components/tide-tracker";
+import { HomeSpot } from "@/components/home-spot";
 import { deepSeaCreatures, getDailyCreature } from "@/lib/creatures";
 import { getAllPosts } from "@/lib/posts";
 
@@ -45,7 +45,7 @@ export default function HomePage() {
       </header>
 
       <section aria-label="Surface instruments" className="grid gap-5 py-6 xl:grid-cols-[1.1fr_0.9fr]">
-        <TideTracker />
+        <HomeSpot />
         <CreatureSpotlight creature={creature} />
       </section>
 

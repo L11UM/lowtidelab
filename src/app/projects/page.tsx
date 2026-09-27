@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 };
 
 const systems = [
-  { href: "/tides", label: "Tide tables", detail: "Compare predictions across eight NOAA coastal stations.", icon: Waves, status: "NOAA CO-OPS" },
+  { href: "/tides", label: "Tide tables", detail: "Compare predictions across three Southern California stations.", icon: Waves, status: "NOAA CO-OPS" },
   { href: "/coast", label: "Coastal watch", detail: "Track active storms and current watches, warnings, and advisories.", icon: Radio, status: "NHC · NWS" },
   { href: "/blog", label: "Creature log", detail: "Daily field notes on deep-sea animals and their adaptations.", icon: Fish, status: "Daily descent" },
 ];

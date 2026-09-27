@@ -4,6 +4,10 @@ import { useCallback, useEffect, useState } from "react";
 import { clsx } from "clsx";
 import { ExternalLink, LayoutGrid, Pause, Play, Radio, Square } from "lucide-react";
 import { pierCams, pierEmbedUrl, pierWatchUrl, type PierCam } from "@/lib/piers";
+import { buildBreakCall } from "@/lib/break-call";
+import { coastalSpots } from "@/lib/coastal-spots";
+import { fetchMarineConditions, type MarineConditions } from "@/lib/marine";
+import { fetchTideData, tideStations, type TideData } from "@/lib/tides";
 
 const CRUISE_SECONDS = 60;
 
@@ -31,7 +35,7 @@ function CamFrame({ cam, title }: { cam: PierCam; title: string }) {
   );
 }
 
-function ScopeOverlay({ cam }: { cam: PierCam }) {
+function ScopeOverlay({ cam, summary, loading }: { cam: PierCam; summary: string; loading: boolean }) {
   const time = useLocalTime(cam.timeZone);
   return (
     <div className="pointer-events-none absolute inset-0">
@@ -48,6 +52,10 @@ function ScopeOverlay({ cam }: { cam: PierCam }) {
       <div className="absolute right-5 top-5 rounded bg-black/55 px-2 py-1 font-mono text-[10px] tabular-nums text-white/90 sm:right-8 sm:top-8">
         {time} local
       </div>
+      <div className="absolute bottom-5 left-5 right-5 flex flex-wrap items-center justify-between gap-2 rounded-md border border-white/10 bg-black/75 px-3 py-2 backdrop-blur-sm sm:bottom-8 sm:left-8 sm:right-8">
+        <p className="max-w-full text-[10px] font-medium leading-relaxed text-white sm:text-xs">{loading ? "Reading this break…" : summary}</p>
+        {!loading && <span className="shrink-0 rounded border border-accent/35 bg-accent/10 px-2 py-1 text-[9px] font-semibold tracking-[0.12em] text-accent-light">NOAA + O-M</span>}
+      </div>
     </div>
   );
 }
@@ -57,7 +65,19 @@ export function PierScope() {
   const [cruising, setCruising] = useState(false);
   const [countdown, setCountdown] = useState(CRUISE_SECONDS);
   const [wall, setWall] = useState(false);
+  const [tideData, setTideData] = useState<TideData | null>(null);
+  const [marine, setMarine] = useState<MarineConditions | null>(null);
+  const [conditionsLoading, setConditionsLoading] = useState(true);
+  const [now, setNow] = useState(() => Date.now());
   const cam = pierCams[index];
+  const spot = coastalSpots.find((item) => item.id === cam.spotId) ?? coastalSpots[0];
+  const tideStation = tideStations.find((station) => station.id === spot.tideStationId) ?? tideStations[0];
+  const breakCall = buildBreakCall(tideData, marine, spot, now);
+
+  useEffect(() => {
+    const interval = window.setInterval(() => setNow(Date.now()), 60_000);
+    return () => window.clearInterval(interval);
+  }, []);
 
   const select = useCallback((next: number) => {
     setIndex((next + pierCams.length) % pierCams.length);
@@ -69,6 +89,28 @@ export function PierScope() {
     const match = pierCams.findIndex((item) => item.id === requested);
     if (match >= 0) setIndex(match);
   }, []);
+
+  useEffect(() => {
+    let active = true;
+    const loadConditions = async () => {
+      setConditionsLoading(true);
+      const [tides, conditions] = await Promise.allSettled([
+        fetchTideData(tideStation),
+        fetchMarineConditions(spot),
+      ]);
+      if (!active) return;
+      setTideData(tides.status === "fulfilled" ? tides.value : null);
+      setMarine(conditions.status === "fulfilled" ? conditions.value : null);
+      setConditionsLoading(false);
+    };
+
+    void loadConditions();
+    const interval = window.setInterval(loadConditions, 15 * 60 * 1000);
+    return () => {
+      active = false;
+      window.clearInterval(interval);
+    };
+  }, [spot, tideStation]);
 
   useEffect(() => {
     if (!cruising || wall) return;
@@ -128,7 +170,7 @@ export function PierScope() {
           <section aria-label={`${cam.pier} live view`}>
             <div className="relative aspect-video overflow-hidden rounded-lg border border-primary/25 bg-black shadow-glow">
               <CamFrame cam={cam} title={`${cam.pier} live camera`} />
-              <ScopeOverlay cam={cam} />
+              <ScopeOverlay cam={cam} summary={`${breakCall.line} · ${breakCall.verdict}`} loading={conditionsLoading} />
             </div>
             <div className="mt-4 flex flex-wrap items-start justify-between gap-4">
               <div>

@@ -9,18 +9,18 @@ const WIDTH = 400;
 const HEIGHT = 150;
 const PAD_Y = 16;
 
-export function TideTracker({ fullWidth = false }: { fullWidth?: boolean }) {
+export function TideTracker({ fullWidth = false, stationId, showStationSelect = true, showChart = true, onData }: { fullWidth?: boolean; stationId?: string; showStationSelect?: boolean; showChart?: boolean; onData?: (data: TideData | null) => void }) {
   const [data, setData] = useState<TideData | null>(null);
   const [station, setStation] = useState<TideStation>(defaultTideStation);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
   useEffect(() => {
-    if (!fullWidth) return;
-    const requested = new URLSearchParams(window.location.search).get("station");
+    const requested = stationId ?? (fullWidth ? new URLSearchParams(window.location.search).get("station") : null);
+    if (!requested) return;
     const match = tideStations.find((item) => item.id === requested);
     if (match) setStation(match);
-  }, [fullWidth]);
+  }, [fullWidth, stationId]);
 
   useEffect(() => {
     let cancelled = false;
@@ -32,10 +32,12 @@ export function TideTracker({ fullWidth = false }: { fullWidth?: boolean }) {
       .then((result) => {
         if (cancelled) return;
         setData(result);
+        onData?.(result);
       })
       .catch(() => {
         if (cancelled) return;
         setError(true);
+        onData?.(null);
       })
       .finally(() => {
         if (!cancelled) setLoading(false);
@@ -44,7 +46,7 @@ export function TideTracker({ fullWidth = false }: { fullWidth?: boolean }) {
     return () => {
       cancelled = true;
     };
-  }, [station]);
+  }, [station, onData]);
 
   const chart = useMemo(() => {
     if (!data || data.points.length === 0) return null;
@@ -102,18 +104,20 @@ export function TideTracker({ fullWidth = false }: { fullWidth?: boolean }) {
             <MapPin className="h-4 w-4 text-primary-light" />
             <span>{data?.stationName ?? station.name}</span>
           </div>
-          <label htmlFor="tide-station" className="sr-only">Select tide station</label>
-          <select
-            id="tide-station"
-            value={station.id}
-            onChange={(event) => {
-              const nextStation = tideStations.find((item) => item.id === event.target.value);
-              if (nextStation) setStation(nextStation);
-            }}
-            className="mt-3 max-w-full rounded-md border border-white/15 bg-[#102124] px-3 py-2 text-sm text-white outline-none focus:border-primary-light"
-          >
-            {tideStations.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}
-          </select>
+          {showStationSelect && <>
+            <label htmlFor="tide-station" className="sr-only">Select tide station</label>
+            <select
+              id="tide-station"
+              value={station.id}
+              onChange={(event) => {
+                const nextStation = tideStations.find((item) => item.id === event.target.value);
+                if (nextStation) setStation(nextStation);
+              }}
+              className="mt-3 max-w-full rounded-md border border-white/15 bg-[#102124] px-3 py-2 text-sm text-white outline-none focus:border-primary-light"
+            >
+              {tideStations.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}
+            </select>
+          </>}
         </div>
         <div className="min-w-24 text-right">
           <p className="text-[11px] uppercase tracking-[0.14em] text-muted">Predicted now</p>
@@ -127,7 +131,7 @@ export function TideTracker({ fullWidth = false }: { fullWidth?: boolean }) {
         </div>
       </div>
 
-      <div className={`relative mt-5 w-full ${fullWidth ? "h-[240px]" : "h-[150px]"}`}>
+      {showChart && <div className={`relative mt-5 w-full ${fullWidth ? "h-[240px]" : "h-[150px]"}`}>
         {loading ? <div className="flex h-full items-center justify-center gap-2 text-sm text-muted"><Loader2 className="h-4 w-4 animate-spin" />Reading station data</div>
           : error ? <div className="flex h-full items-center justify-center text-sm text-accent-light">NOAA predictions are temporarily unavailable for this station.</div>
             : chart ? <svg viewBox={`0 0 ${WIDTH} ${HEIGHT}`} preserveAspectRatio="none" className="h-full w-full" role="img" aria-label={`Tide prediction chart for ${data?.stationName}`}>
@@ -137,8 +141,8 @@ export function TideTracker({ fullWidth = false }: { fullWidth?: boolean }) {
               <motion.circle cx={chart.nowX} cy={chart.nowY} r={10} fill="#8fc9c1" opacity={0.18} animate={{ scale: [1, 1.6, 1], opacity: [0.28, 0, 0.28] }} transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut" }} style={{ transformOrigin: `${chart.nowX}px ${chart.nowY}px` }} />
               <circle cx={chart.nowX} cy={chart.nowY} r={4} fill="#e8c39a" />
             </svg> : <div className="flex h-full items-center justify-center text-sm text-muted">No tide predictions for this station.</div>}
-      </div>
-      {data && data.points.length > 1 && <div className="mt-1 flex justify-between text-[10px] tabular-nums text-muted">
+      </div>}
+      {showChart && data && data.points.length > 1 && <div className="mt-1 flex justify-between text-[10px] tabular-nums text-muted">
         <span>{data.points[0].time.toLocaleTimeString([], { hour: "numeric", minute: "2-digit", timeZone: data.timeZone })}</span>
         <span>{data.points[data.points.length - 1].time.toLocaleTimeString([], { hour: "numeric", minute: "2-digit", timeZone: data.timeZone })} local</span>
       </div>}

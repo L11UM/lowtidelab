@@ -1,17 +1,12 @@
 // Fetches live tide predictions from NOAA's public CO-OPS API (no key required).
 export const tideStations = [
-  { id: "9447130", name: "Seattle, Washington", region: "Pacific Northwest", timeZone: "America/Los_Angeles", lat: 47.60264, lon: -122.3393 },
-  { id: "9414290", name: "San Francisco, California", region: "California", timeZone: "America/Los_Angeles", lat: 37.806305, lon: -122.46589 },
-  { id: "9410660", name: "Los Angeles, California", region: "California", timeZone: "America/Los_Angeles", lat: 33.72, lon: -118.272 },
-  { id: "9410170", name: "San Diego, California", region: "California", timeZone: "America/Los_Angeles", lat: 32.715557, lon: -117.17667 },
-  { id: "1612340", name: "Honolulu, Hawaii", region: "Pacific", timeZone: "Pacific/Honolulu", lat: 21.303333, lon: -157.86453 },
-  { id: "8724580", name: "Key West, Florida", region: "Gulf / Florida", timeZone: "America/New_York", lat: 24.5557, lon: -81.8079 },
-  { id: "8518750", name: "The Battery, New York", region: "Atlantic", timeZone: "America/New_York", lat: 40.700554, lon: -74.01417 },
-  { id: "8443970", name: "Boston, Massachusetts", region: "Atlantic", timeZone: "America/New_York", lat: 42.35389, lon: -71.05028 },
+  { id: "9410840", name: "Santa Monica, California", region: "Los Angeles County", timeZone: "America/Los_Angeles", lat: 34.0083, lon: -118.5 },
+  { id: "9410660", name: "Los Angeles, California", region: "South Bay", timeZone: "America/Los_Angeles", lat: 33.72, lon: -118.272 },
+  { id: "9410580", name: "Newport Beach, California", region: "Orange County", timeZone: "America/Los_Angeles", lat: 33.6033, lon: -117.883 },
 ] as const;
 
 export type TideStation = (typeof tideStations)[number];
-export const defaultTideStation = tideStations[2];
+export const defaultTideStation = tideStations[1];
 
 export type TidePoint = { time: Date; feet: number };
 export type HiLoPoint = { time: Date; feet: number; type: "H" | "L" };

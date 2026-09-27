@@ -16,14 +16,14 @@ Open [http://localhost:3000](http://localhost:3000). The `predev` hook creates a
 ## Ocean instruments
 
 - `/` — ocean dashboard with tide telemetry, coastal watch, and the latest creature field note.
-- `/tides` — NOAA predictions for eight selectable U.S. coastal stations.
+- `/tides` — NOAA predictions across three Southern California stations.
 - `/map` — pier cameras, NOAA tide stations, and active tropical systems on one chart.
 - `/coast` — active NHC systems and current NWS alerts.
 - `/blog` — Creature Log. Older general-interest entries are preserved under Earlier Transmissions.
 - `/lab` — Abyssal Index with species habitat and depth notes.
 - `/about` — mission brief and data-source references.
 
-Tide station IDs and time zones live in `src/lib/tides.ts`. Add species field notes to `content/posts/`; creature entries use `creature` and `scientific_name` frontmatter so the dashboard spotlight follows the latest species post.
+Tide station IDs and time zones live in `src/lib/tides.ts`. Saved home breaks and their nearest NOAA stations are in `src/lib/coastal-spots.ts`. Add species field notes to `content/posts/`; creature entries use `creature` and `scientific_name` frontmatter so the dashboard spotlight follows the latest species post.
 
 ## Daily Creature Log
 
