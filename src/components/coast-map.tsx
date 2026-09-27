@@ -37,9 +37,8 @@ export default function CoastMap({ layers, onStorms }: { layers: Record<LayerKey
   return (
     <MapContainer bounds={bounds} boundsOptions={{ padding: [40, 40] }} worldCopyJump scrollWheelZoom className="h-full w-full bg-[#0b1416]">
       <TileLayer
-        url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
-        subdomains="abcd"
+        url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
+        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         maxZoom={19}
       />
 
