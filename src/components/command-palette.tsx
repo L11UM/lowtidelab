@@ -9,6 +9,7 @@ import {
   Waves,
   Radio,
   Fish,
+  Video,
   Mail,
   ArrowRight,
   Search,
@@ -44,6 +45,13 @@ export function CommandPalette() {
         icon: Waves,
         action: () => router.push("/tides"),
         keywords: "station high low water level",
+      },
+      {
+        id: "piers",
+        label: "Open pier scope",
+        icon: Video,
+        action: () => router.push("/piers"),
+        keywords: "live cam webcam pier redondo video",
       },
       {
         id: "conditions",

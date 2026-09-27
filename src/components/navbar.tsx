@@ -10,6 +10,7 @@ import { CommandPaletteTrigger } from "@/components/command-palette";
 const links = [
   { href: "/", label: "Home" },
   { href: "/tides", label: "Tides" },
+  { href: "/piers", label: "Piers" },
   { href: "/coast", label: "Conditions" },
   { href: "/blog", label: "Creature Log" },
 ];
