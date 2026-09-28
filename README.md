@@ -1,6 +1,6 @@
 # Low Tide Lab
 
-Low Tide Lab is an ocean-intelligence desk: NOAA tide predictions, coastal alerts, active tropical systems, and a daily deep-sea creature journal. The site is built with Next.js, TypeScript, Tailwind CSS, and Framer Motion, and exports statically for GitHub Pages.
+Low Tide Lab is an ocean-intelligence desk: NOAA tide predictions, coastal alerts, active tropical systems, pier cameras, and small-batch field gear. The site is built with Next.js, TypeScript, Tailwind CSS, and Framer Motion, and exports statically for GitHub Pages.
 
 ## Run locally
 
@@ -15,19 +15,19 @@ Open [http://localhost:3000](http://localhost:3000). The `predev` hook creates a
 
 ## Ocean instruments
 
-- `/` — ocean dashboard with tide telemetry, coastal watch, and the latest creature field note.
+- `/` — ocean dashboard with a saved home break, tide/marine conditions, and coastal watch.
 - `/tides` — NOAA predictions across three Southern California stations.
 - `/map` — pier cameras, NOAA tide stations, and active tropical systems on one chart.
 - `/coast` — active NHC systems and current NWS alerts.
-- `/blog` — Creature Log. Older general-interest entries are preserved under Earlier Transmissions.
+- `/shop` — the Submarine 04 cap and deck signal patch.
 - `/lab` — Abyssal Index with species habitat and depth notes.
 - `/about` — mission brief and data-source references.
 
 Tide station IDs and time zones live in `src/lib/tides.ts`. Saved home breaks and their nearest NOAA stations are in `src/lib/coastal-spots.ts`. Add species field notes to `content/posts/`; creature entries use `creature` and `scientific_name` frontmatter so the dashboard spotlight follows the latest species post.
 
-## Daily Creature Log
+## Legacy daily content
 
-The workflow at `.github/workflows/daily-post.yml` runs once a day. It chooses from a rotating deep-sea species list, avoids creatures featured in the latest 15 entries, and writes scientific-name metadata. Configure `GEMINI_API_KEY` or `OPENAI_API_KEY` as a GitHub Actions secret for automated posts. The `TOPIC_OVERRIDE` workflow input can target a specific creature.
+The older daily-post workflow remains available for archived content, but Creature Log is no longer part of the primary product navigation. Configure `GEMINI_API_KEY` or `OPENAI_API_KEY` as a GitHub Actions secret if the archive pipeline is still needed.
 
 ## Data feeds
 

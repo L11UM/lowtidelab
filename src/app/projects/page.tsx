@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowUpRight, Fish, Radio, Waves } from "lucide-react";
+import { ArrowUpRight, Radio, ShoppingBag, Waves } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Ocean Systems",
@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 const systems = [
   { href: "/tides", label: "Tide tables", detail: "Compare predictions across three Southern California stations.", icon: Waves, status: "NOAA CO-OPS" },
   { href: "/coast", label: "Coastal watch", detail: "Track active storms and current watches, warnings, and advisories.", icon: Radio, status: "NHC · NWS" },
-  { href: "/blog", label: "Creature log", detail: "Daily field notes on deep-sea animals and their adaptations.", icon: Fish, status: "Daily descent" },
+  { href: "/shop", label: "Field gear", detail: "Small-batch caps and deck patches for the crew.", icon: ShoppingBag, status: "First run" },
 ];
 
 export default function ProjectsPage() {

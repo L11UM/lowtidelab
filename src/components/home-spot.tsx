@@ -172,7 +172,7 @@ export function HomeSpot() {
         <Video className="h-3.5 w-3.5" /> Nearby cam: {nearbyCamera.pier}
       </Link>}
 
-      <TideTracker key={spot.id} stationId={tideStation.id} showStationSelect={false} showChart={false} onData={receiveTideData} />
+      <TideTracker key={spot.id} stationId={tideStation.id} displayLocation={spot.name} showStationSelect={false} showChart={false} onData={receiveTideData} />
     </section>
   );
 }

@@ -9,7 +9,7 @@ const WIDTH = 400;
 const HEIGHT = 150;
 const PAD_Y = 16;
 
-export function TideTracker({ fullWidth = false, stationId, showStationSelect = true, showChart = true, onData }: { fullWidth?: boolean; stationId?: string; showStationSelect?: boolean; showChart?: boolean; onData?: (data: TideData | null) => void }) {
+export function TideTracker({ fullWidth = false, stationId, displayLocation, showStationSelect = true, showChart = true, onData }: { fullWidth?: boolean; stationId?: string; displayLocation?: string; showStationSelect?: boolean; showChart?: boolean; onData?: (data: TideData | null) => void }) {
   const [data, setData] = useState<TideData | null>(null);
   const [station, setStation] = useState<TideStation>(defaultTideStation);
   const [loading, setLoading] = useState(true);
@@ -102,8 +102,9 @@ export function TideTracker({ fullWidth = false, stationId, showStationSelect = 
           <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-primary-light">Tide telemetry · NOAA CO-OPS</p>
           <div className="mt-3 flex items-center gap-2 text-sm text-white">
             <MapPin className="h-4 w-4 text-primary-light" />
-            <span>{data?.stationName ?? station.name}</span>
+            <span>{displayLocation ?? data?.stationName ?? station.name}</span>
           </div>
+          {displayLocation && <p className="ml-6 mt-1 text-[10px] text-muted">NOAA gauge · {data?.stationName ?? station.name}</p>}
           {showStationSelect && <>
             <label htmlFor="tide-station" className="sr-only">Select tide station</label>
             <select

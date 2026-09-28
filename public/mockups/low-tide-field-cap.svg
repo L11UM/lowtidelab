@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 620" role="img" aria-labelledby="title desc">
+  <title id="title">Low Tide Lab field cap mockup</title>
+  <desc id="desc">A navy field cap with a pale ocean telemetry mark on a dark studio background.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#142a2d"/><stop offset="1" stop-color="#071012"/></linearGradient>
+    <linearGradient id="crown" x1="0" y1="0" x2="0.8" y2="1"><stop stop-color="#18393e"/><stop offset="1" stop-color="#0a1b20"/></linearGradient>
+    <linearGradient id="brim" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#102a2f"/><stop offset="1" stop-color="#061316"/></linearGradient>
+    <filter id="shadow"><feGaussianBlur stdDeviation="18"/></filter>
+  </defs>
+  <rect width="900" height="620" fill="url(#bg)"/>
+  <path d="M0 500 Q260 420 540 500 T900 470 V620 H0Z" fill="#0b1719" opacity=".7"/>
+  <ellipse cx="450" cy="498" rx="310" ry="38" fill="#000" opacity=".5" filter="url(#shadow)"/>
+  <path d="M207 367 C216 210 337 111 488 133 C617 152 698 242 698 374 C575 421 343 423 207 367Z" fill="url(#crown)" stroke="#41777b" stroke-width="4"/>
+  <path d="M207 367 C328 405 558 411 698 374 C665 430 533 467 351 456 C271 451 220 419 207 367Z" fill="url(#brim)" stroke="#315b61" stroke-width="4"/>
+  <path d="M288 231 Q432 144 581 235" fill="none" stroke="#28555a" stroke-width="3"/>
+  <path d="M219 353 Q444 390 684 357" fill="none" stroke="#5fa8a0" stroke-opacity=".35" stroke-width="3"/>
+  <circle cx="451" cy="287" r="55" fill="#0e272b" stroke="#8fc9c1" stroke-width="3"/>
+  <path d="M418 293 Q451 258 484 293 Q451 328 418 293Z" fill="none" stroke="#e8c39a" stroke-width="5"/>
+  <path d="M451 242 V333 M405 287 H497" stroke="#8fc9c1" stroke-width="2" opacity=".8"/>
+  <text x="451" y="373" text-anchor="middle" fill="#dcece8" font-family="monospace" font-size="15" letter-spacing="4">FIELD STATION</text>
+  <text x="46" y="72" fill="#8fc9c1" font-family="monospace" font-size="13" letter-spacing="3">LOW TIDE LAB / FIELD GEAR</text>
+  <text x="854" y="566" text-anchor="end" fill="#8fa19d" font-family="monospace" font-size="11">MOCKUP / NAVY COTTON</text>
+</svg>

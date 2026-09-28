@@ -66,9 +66,13 @@ export function buildBreakCall(tides: TideData | null, marine: MarineConditions 
   } else if (wind <= 10 && offshore && waveHeight <= 1.8 && period >= 7) {
     verdict = "GO";
     note = "Light offshore wind and manageable swell";
-  } else if (wind <= 12 && waveHeight <= 1.2) {
+  } else if (wind <= 8 && offshore && waveHeight <= 1.2) {
     verdict = "GO";
-    note = "Light wind and mellow water";
+    note = "Very light offshore wind and mellow water";
+  } else if (offshore) {
+    note = "Offshore, but wait for a cleaner window";
+  } else if (offshoreLabel(windDirection, spot.offshoreFromDegrees) === "onshore") {
+    note = "Onshore wind is softening the break";
   }
 
   return { line: parts.join(" · "), verdict, note, nextLow: low && minutes !== null ? { minutes, feet: low.feet } : null };

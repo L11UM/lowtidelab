@@ -17,7 +17,7 @@ export default function AbyssalIndexPage() {
           <h1 className="text-3xl font-semibold tracking-tight text-white sm:text-4xl">Abyssal index</h1>
           <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted">A starting chart for the remarkable animals of the twilight, midnight, and vent zones. Depths are approximate and can vary by species and life stage.</p>
         </div>
-        <Link href="/blog" className="inline-flex items-center gap-2 text-sm font-medium text-primary-light hover:text-white">Read field notes <ArrowUpRight className="h-4 w-4" /></Link>
+        <Link href="/shop" className="inline-flex items-center gap-2 text-sm font-medium text-primary-light hover:text-white">Open field gear <ArrowUpRight className="h-4 w-4" /></Link>
       </div>
 
       <div className="mt-8 overflow-x-auto border-y border-white/10">
