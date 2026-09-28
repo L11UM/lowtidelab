@@ -43,16 +43,16 @@ export function buildBreakCall(tides: TideData | null, marine: MarineConditions 
 
   const parts = [
     minutes !== null && low ? `Low in ${durationLabel(minutes)} · ${low.feet.toFixed(1)} ft` : "Next low unavailable",
-    wind !== null && windDirection !== null
+    wind != null && windDirection != null
       ? `${directionLabel(windDirection)} ${Math.round(wind)} kn ${offshoreLabel(windDirection, spot.offshoreFromDegrees)}`
       : null,
-    waveHeight !== null && period !== null
+    waveHeight != null && period != null
       ? `${(waveHeight * 3.28084).toFixed(1)} ft @ ${Math.round(period)}s`
       : null,
-    water !== null ? `${Math.round(water * 9 / 5 + 32)}°F` : null,
+    water != null ? `${Math.round(water * 9 / 5 + 32)}°F` : null,
   ].filter(Boolean);
 
-  if (!low || wind === null || windDirection === null || waveHeight === null || period === null) {
+  if (!low || wind == null || windDirection == null || waveHeight == null || period == null) {
     const note = !low ? "Tide prediction unavailable" : "Marine data is incomplete";
     return { line: parts.join(" · "), verdict: "NO READ", note, nextLow: low && minutes !== null ? { minutes, feet: low.feet } : null };
   }
