@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { clsx } from "clsx";
 import { ChevronLeft, ChevronRight, ExternalLink, Globe2, LayoutGrid, Radio, Square } from "lucide-react";
+import { AiTimeMachine } from "@/components/ai-time-machine";
 import { treysEmbedUrl, type TreysFeed } from "@/lib/treys-corner";
 
 function FeedPlayer({ feed }: { feed: TreysFeed }) {
@@ -134,6 +135,8 @@ export function TreysCorner({ feeds }: { feeds: TreysFeed[] }) {
           </div>
         )}
       </section>
+
+      <AiTimeMachine />
 
       <section aria-labelledby="country-desks-heading" className="mt-12">
         <div className="mb-4 flex items-center gap-2">
