@@ -3,6 +3,7 @@ export const tideStations = [
   { id: "9410840", name: "Santa Monica, California", region: "Los Angeles County", timeZone: "America/Los_Angeles", lat: 34.0083, lon: -118.5 },
   { id: "9410660", name: "Los Angeles, California", region: "South Bay", timeZone: "America/Los_Angeles", lat: 33.72, lon: -118.272 },
   { id: "9410580", name: "Newport Beach, California", region: "Orange County", timeZone: "America/Los_Angeles", lat: 33.6033, lon: -117.883 },
+  { id: "9410170", name: "San Diego, California", region: "San Diego County", timeZone: "America/Los_Angeles", lat: 32.715557, lon: -117.17667 },
 ] as const;
 
 export type TideStation = (typeof tideStations)[number];

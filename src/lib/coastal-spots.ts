@@ -14,6 +14,16 @@ export type CoastalSpot = {
 
 export const coastalSpots: CoastalSpot[] = [
   {
+    id: "santa-monica",
+    name: "Santa Monica Pier",
+    area: "Santa Monica",
+    lat: 34.0092,
+    lon: -118.4977,
+    tideStationId: "9410840",
+    cameraId: "santa-monica",
+    offshoreFromDegrees: 70,
+  },
+  {
     id: "redondo",
     name: "Redondo Beach Pier",
     area: "Redondo Beach",
@@ -52,6 +62,16 @@ export const coastalSpots: CoastalSpot[] = [
     tideStationId: "9410580",
     cameraId: "huntington",
     offshoreFromDegrees: 60,
+  },
+  {
+    id: "oceanside",
+    name: "Oceanside Pier",
+    area: "Oceanside",
+    lat: 33.1934,
+    lon: -117.3867,
+    tideStationId: "9410170",
+    cameraId: "oceanside",
+    offshoreFromDegrees: 70,
   },
 ];
 
