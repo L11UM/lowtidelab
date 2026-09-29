@@ -17,7 +17,7 @@ export default function PiersPage() {
             <Video className="h-3.5 w-3.5" /> Periscope · live surface feeds
           </p>
           <h1 className="mt-3 text-3xl font-semibold tracking-tight text-white sm:text-4xl">Pier scope</h1>
-          <p className="mt-2 max-w-xl text-sm leading-relaxed text-muted">Raise the periscope on {pierCams.length} California pier cameras. Feeds play muted; unmute from the player.</p>
+          <p className="mt-2 max-w-xl text-sm leading-relaxed text-muted">Raise the periscope on {pierCams.length} California pier cameras from Santa Monica through Oceanside. Feeds play muted; unmute from the player.</p>
         </div>
       </header>
       <PierScope />
