@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { clsx } from "clsx";
-import { Home, Map as MapIcon, Radio, ShoppingBag, Video, Waves } from "lucide-react";
+import { Home, Map as MapIcon, Radio, ShoppingBag, Telescope, Video, Waves } from "lucide-react";
 import { CommandPaletteTrigger } from "@/components/command-palette";
 
 const links = [
@@ -15,6 +15,7 @@ const links = [
   { href: "/map", label: "Map", icon: MapIcon },
   { href: "/coast", label: "Conditions", icon: Radio },
   { href: "/shop", label: "Shop", icon: ShoppingBag },
+  { href: "/treys-corner", label: "Trey's Corner", icon: Telescope },
 ];
 
 export function Navbar() {
