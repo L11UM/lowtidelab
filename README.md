@@ -41,3 +41,16 @@ Feeds are labeled when unavailable; tide values are never replaced by simulated 
 
 The GitHub Pages workflow at `.github/workflows/deploy.yml` builds and deploys on pushes to `main`. `npm run build` runs the snapshot generator before Next.js static export. The production domain is `https://lowtidelab.dev`.
 
+## Release announcements
+
+The workflow at `.github/workflows/social-release.yml` creates an X post and Instagram caption only for commits containing `[announce]` in the commit message, or for a manual workflow run. It always uploads the generated copy as an Actions artifact.
+
+To publish automatically, add these GitHub Actions secrets:
+
+- `X_ACCESS_TOKEN` — an X user access token with permission to write posts.
+- `INSTAGRAM_USER_ID` — an Instagram Professional account ID.
+- `INSTAGRAM_ACCESS_TOKEN` — a Meta Graph API token with publishing permission.
+- `INSTAGRAM_IMAGE_URL` — a public HTTPS image URL for the Instagram post.
+
+Without those secrets, the workflow still produces ready-to-post copy without failing the deployment pipeline.
+

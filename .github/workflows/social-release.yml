@@ -1,0 +1,50 @@
+name: Announce Important Release
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      announce:
+        description: "Publish a release announcement now"
+        required: true
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+jobs:
+  announce:
+    if: contains(github.event.head_commit.message, '[announce]') || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Collect changed files
+        id: changes
+        shell: bash
+        run: |
+          files=$(git diff-tree --no-commit-id --name-only -r HEAD | tr '\n' ' ')
+          echo "files=$files" >> "$GITHUB_OUTPUT"
+
+      - name: Generate and publish social announcement
+        env:
+          SITE_URL: https://lowtidelab.dev
+          COMMIT_TITLE: ${{ github.event.head_commit.message || github.event.workflow_run.head_commit.message || 'Low Tide Lab release' }}
+          COMMIT_SHA: ${{ github.sha }}
+          CHANGED_FILES: ${{ steps.changes.outputs.files }}
+          X_ACCESS_TOKEN: ${{ secrets.X_ACCESS_TOKEN }}
+          INSTAGRAM_USER_ID: ${{ secrets.INSTAGRAM_USER_ID }}
+          INSTAGRAM_ACCESS_TOKEN: ${{ secrets.INSTAGRAM_ACCESS_TOKEN }}
+          INSTAGRAM_IMAGE_URL: ${{ secrets.INSTAGRAM_IMAGE_URL }}
+        run: node scripts/social-release.mjs | tee social-release.json
+
+      - name: Upload social copy and result
+        uses: actions/upload-artifact@v4
+        with:
+          name: low-tide-lab-social-release-${{ github.sha }}
+          path: social-release.json
