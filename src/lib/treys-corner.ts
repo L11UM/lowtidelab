@@ -34,6 +34,17 @@ export const treysFeeds: TreysFeed[] = [
     note: "A 24/7 wildlife network with rotating cameras across African reserves.",
   },
   {
+    id: "south-africa-tau-waterhole",
+    country: "South Africa",
+    place: "Tau Waterhole · Madikwe",
+    kind: "live",
+    embedAllowed: true,
+    operator: "Explore Africa",
+    youtubeId: "DsNtwGJXTTs",
+    url: "https://www.youtube.com/watch?v=DsNtwGJXTTs",
+    note: "A 24/7 safari waterhole stream where crocodiles may appear alongside other wildlife.",
+  },
+  {
     id: "china-shanghai-live",
     country: "China",
     place: "Shanghai · Huangpu River skyline",
