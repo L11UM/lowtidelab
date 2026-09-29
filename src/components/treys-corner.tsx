@@ -25,6 +25,7 @@ function FeedPlayer({ feed }: { feed: TreysFeed }) {
       title={`${feed.place} live stream`}
       allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
       referrerPolicy="strict-origin-when-cross-origin"
+      loading="lazy"
       className="absolute inset-0 h-full w-full"
     />
   );
