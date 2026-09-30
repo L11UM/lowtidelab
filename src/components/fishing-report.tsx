@@ -2,8 +2,9 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { clsx } from "clsx";
-import { ArrowUpRight, Cloud, CloudDrizzle, CloudFog, CloudLightning, CloudRain, Fish, LocateFixed, Snowflake, Sun, ThermometerSun, Wind } from "lucide-react";
+import { ArrowUpRight, Cloud, CloudDrizzle, CloudFog, CloudLightning, CloudRain, Fish, LocateFixed, RefreshCw, Snowflake, Sun, ThermometerSun, Wind } from "lucide-react";
 import { defaultFishingSpot, fishingSpots, type FishingSpot } from "@/lib/fishing-spots";
+import { fetchStockingReport, matchingStockingWeek, type StockingReport } from "@/lib/stocking";
 
 type CurrentWeather = {
   time: string;
@@ -69,9 +70,17 @@ export function FishingReport() {
   const [weather, setWeather] = useState<WeatherReport | null>(null);
   const [loading, setLoading] = useState(true);
   const [unavailable, setUnavailable] = useState(false);
+  const [stockingReport, setStockingReport] = useState<StockingReport | null>(null);
+  const [stockingLoading, setStockingLoading] = useState(true);
+  const [stockingRefresh, setStockingRefresh] = useState(0);
   const spot = fishingSpots.find((item) => item.id === spotId) ?? defaultFishingSpot;
   const groupedSpots = useMemo(() => groupSpots(fishingSpots), []);
   const current = weather?.current;
+  const lastStocking = stockingReport ? matchingStockingWeek(spot, stockingReport) : null;
+  const stockingWeeksAgo = lastStocking
+    ? Math.max(0, Math.floor((Date.now() - new Date(`${lastStocking.weekOf}T12:00:00`).getTime()) / (7 * 24 * 60 * 60 * 1000)))
+    : null;
+  const stockingAgePercent = stockingWeeksAgo === null ? 0 : Math.min(100, (stockingWeeksAgo / 10) * 100);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -104,6 +113,18 @@ export function FishingReport() {
 
     return () => controller.abort();
   }, [spot]);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    setStockingLoading(true);
+    fetchStockingReport(controller.signal)
+      .then((report) => setStockingReport(report))
+      .catch(() => setStockingReport(null))
+      .finally(() => {
+        if (!controller.signal.aborted) setStockingLoading(false);
+      });
+    return () => controller.abort();
+  }, [stockingRefresh]);
 
   const windRead = current
     ? current.wind_gusts_10m >= 30
@@ -221,6 +242,33 @@ export function FishingReport() {
           ) : (
             <p className="mt-5 text-sm text-muted">Current conditions could not be loaded.</p>
           )}
+
+          <section aria-labelledby="stocking-meter-title" className="mt-6 border-y border-white/10 py-4">
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <h3 id="stocking-meter-title" className="font-mono text-[10px] uppercase tracking-[0.14em] text-muted">Stocking recency</h3>
+                {stockingLoading ? (
+                  <p role="status" className="mt-2 text-sm text-muted">Checking AZGFD schedule…</p>
+                ) : lastStocking && stockingWeeksAgo !== null ? (
+                  <>
+                    <p className="mt-2 text-sm font-medium text-white">Week of {new Date(`${lastStocking.weekOf}T12:00:00`).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</p>
+                    <p className="mt-1 text-xs text-muted">{stockingWeeksAgo === 0 ? "Listed this week" : `${stockingWeeksAgo} ${stockingWeeksAgo === 1 ? "week" : "weeks"} ago`} · {lastStocking.season}</p>
+                  </>
+                ) : (
+                  <p className="mt-2 text-sm text-muted">{stockingReport?.available ? "No stocking week listed for this water." : "Stocking schedule unavailable."}</p>
+                )}
+              </div>
+              <button type="button" onClick={() => setStockingRefresh((value) => value + 1)} disabled={stockingLoading} aria-label="Refresh stocking schedule" title="Refresh AZGFD schedule" className="rounded border border-white/10 p-2 text-muted transition-colors hover:border-white/25 hover:text-white disabled:opacity-40">
+                <RefreshCw className={clsx("h-3.5 w-3.5", stockingLoading && "animate-spin")} />
+              </button>
+            </div>
+            <div role="meter" aria-label="Weeks since AZGFD's listed stocking week" aria-valuemin={0} aria-valuemax={10} aria-valuenow={stockingWeeksAgo === null ? 0 : Math.min(stockingWeeksAgo, 10)} aria-valuetext={lastStocking && stockingWeeksAgo !== null ? `${stockingWeeksAgo} weeks since the AZGFD listed stocking week` : "No matching stocking week listed"} className="mt-3 h-1.5 overflow-hidden rounded-full bg-white/10">
+              <div className={clsx("h-full rounded-full transition-[width] duration-500", stockingWeeksAgo !== null && stockingWeeksAgo <= 2 ? "bg-primary-light" : stockingWeeksAgo !== null && stockingWeeksAgo <= 6 ? "bg-accent-light" : "bg-muted")} style={{ width: `${stockingAgePercent}%` }} />
+            </div>
+            <div className="mt-1.5 flex justify-between font-mono text-[9px] uppercase tracking-[0.12em] text-muted"><span>0 weeks</span><span>10+ weeks</span></div>
+            <p className="mt-2 text-[10px] leading-relaxed text-muted">AZGFD lists the planned stocking week; the delivery day can shift. This is recency, not a catch-rate forecast.</p>
+            {stockingReport?.checkedAt && <p className="mt-1 font-mono text-[9px] text-muted">Schedule checked {new Date(stockingReport.checkedAt).toLocaleTimeString("en-US", { timeZone: "America/Phoenix", hour: "numeric", minute: "2-digit" })} Arizona time</p>}
+          </section>
 
           <div className="mt-6 space-y-2">
             <a href={spot.mapUrl} target="_blank" rel="noreferrer" className="flex items-center justify-between gap-3 border-b border-white/10 py-2 text-xs text-primary-light transition-colors hover:text-white">
