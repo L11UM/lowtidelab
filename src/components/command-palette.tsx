@@ -8,7 +8,6 @@ import {
   Home,
   Waves,
   Radio,
-  ShoppingBag,
   Video,
   Map as MapIcon,
   Mail,
@@ -67,13 +66,6 @@ export function CommandPalette() {
         icon: Radio,
         action: () => router.push("/coast"),
         keywords: "storms alerts weather",
-      },
-      {
-        id: "shop",
-        label: "Open the shop",
-        icon: ShoppingBag,
-        action: () => router.push("/shop"),
-        keywords: "hat patch merch field gear store",
       },
       {
         id: "email",
@@ -205,15 +197,17 @@ export function CommandPalette() {
 export function CommandPaletteTrigger() {
   return (
     <button
+      type="button"
+      aria-label="Open command palette"
+      title="Open command palette"
       onClick={() =>
         window.dispatchEvent(
           new KeyboardEvent("keydown", { key: "k", metaKey: true })
         )
       }
-      className="hidden items-center gap-1.5 rounded-full border border-border px-3 py-1.5 text-xs text-muted transition-colors hover:border-white/30 hover:text-white sm:flex"
+      className="hidden h-9 w-9 items-center justify-center rounded-md border border-white/10 text-muted transition-colors hover:border-white/25 hover:text-white sm:flex"
     >
       <Command className="h-3.5 w-3.5" />
-      <span>K</span>
     </button>
   );
 }

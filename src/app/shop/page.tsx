@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import { Anchor, ExternalLink, ShoppingBag } from "lucide-react";
 import { shopProducts } from "@/lib/shop";
 
@@ -8,6 +9,8 @@ export const metadata: Metadata = {
 };
 
 export default function ShopPage() {
+  if (process.env.NEXT_PUBLIC_SHOP_ENABLED !== "true") notFound();
+
   return (
     <section className="container-x py-10 sm:py-14">
       <header className="mb-8 flex flex-wrap items-end justify-between gap-5 border-b border-white/10 pb-6">

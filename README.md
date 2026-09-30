@@ -1,6 +1,6 @@
 # Low Tide Lab
 
-Low Tide Lab is an ocean-intelligence desk: NOAA tide predictions, coastal alerts, active tropical systems, pier cameras, and small-batch field gear. The site is built with Next.js, TypeScript, Tailwind CSS, and Framer Motion, and exports statically for GitHub Pages.
+Low Tide Lab is a focused coastal dashboard for NOAA tide predictions, marine conditions, coastal alerts, and live cameras. The site is built with Next.js, TypeScript, Tailwind CSS, and Framer Motion, and exports statically for GitHub Pages.
 
 ## Run locally
 
@@ -17,9 +17,10 @@ Open [http://localhost:3000](http://localhost:3000). The `predev` hook creates a
 
 - `/` — ocean dashboard with a saved home break, tide/marine conditions, and coastal watch.
 - `/tides` — NOAA predictions across three Southern California stations.
+- `/piers` — live coastal cameras with single-view and wall modes.
 - `/map` — pier cameras, NOAA tide stations, and active tropical systems on one chart.
 - `/coast` — active NHC systems and current NWS alerts.
-- `/shop` — the Submarine 04 cap and deck signal patch.
+- `/treys-corner` — international live cameras and an interactive AI timeline.
 - `/lab` — Abyssal Index with species habitat and depth notes.
 - `/about` — mission brief and data-source references.
 

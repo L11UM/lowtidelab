@@ -85,10 +85,8 @@ export function CoastalConditions({ compact = false }: { compact?: boolean }) {
         )}
       </div>
 
-      <div className="mt-6 grid gap-4 lg:grid-cols-[1.2fr_0.8fr]">
-        <div className="relative min-h-[260px] overflow-hidden rounded-lg border border-border bg-[#101b25] p-5">
-          <div className="absolute inset-0 opacity-35" style={{ backgroundImage: "linear-gradient(rgba(134,193,190,.14) 1px, transparent 1px), linear-gradient(90deg, rgba(134,193,190,.14) 1px, transparent 1px)", backgroundSize: "34px 34px" }} />
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_72%_38%,rgba(223,155,104,.2),transparent_22%),radial-gradient(circle_at_34%_62%,rgba(63,174,156,.18),transparent_26%)]" />
+      <div className={compact ? "mt-4 grid gap-3 lg:grid-cols-[1.2fr_0.8fr]" : "mt-6 grid gap-4 lg:grid-cols-[1.2fr_0.8fr]"}>
+        <div className="relative min-h-[220px] overflow-hidden rounded-lg border border-border bg-surface/60 p-4 sm:p-5">
           <div className="relative flex items-center justify-between">
             <div>
               <p className="text-xs uppercase tracking-wide text-muted">Live storm board</p>
@@ -99,7 +97,7 @@ export function CoastalConditions({ compact = false }: { compact?: boolean }) {
           {!loading && !snapshot.stormFeedAvailable && <p role="status" className="relative mt-3 text-xs text-accent-light">NHC feed unavailable; showing the last received data.</p>}
           <div className="relative mt-10 grid gap-3 sm:grid-cols-2">
             {loading ? <p className="text-sm text-muted">Reading NOAA feeds…</p> : visibleStorms.length ? visibleStorms.map((storm) => (
-              <div key={storm.id} className="rounded-md border border-white/10 bg-black/20 p-4 backdrop-blur-sm">
+              <div key={storm.id} className="rounded-md border border-white/10 bg-black/10 p-3 sm:p-4">
                 <div className="flex items-center justify-between gap-3">
                   <p className="font-semibold text-white">{storm.name}</p>
                   <span className="rounded-full border border-accent/30 bg-accent/10 px-2 py-0.5 text-[11px] text-accent-light">{storm.basin}</span>
@@ -107,11 +105,11 @@ export function CoastalConditions({ compact = false }: { compact?: boolean }) {
                 <p className="mt-2 text-xs text-muted">{storm.classification}{storm.windMph ? ` · ${storm.windMph} mph` : ""}</p>
                 {storm.movement && <p className="mt-1 text-xs text-white/70">{storm.movement}</p>}
               </div>
-            )) : <div className="sm:col-span-2 rounded-xl border border-white/10 bg-black/20 p-4 text-sm text-muted">{snapshot.stormFeedAvailable ? "No active named systems in the current NHC feed." : "The NHC storm feed is temporarily unavailable."}</div>}
+            )) : <div className="sm:col-span-2 rounded-md border border-white/10 bg-black/10 p-4 text-sm text-muted">{snapshot.stormFeedAvailable ? "No active named systems in the current NHC feed." : "The NHC storm feed is temporarily unavailable."}</div>}
           </div>
         </div>
 
-        <div className="rounded-2xl border border-border bg-surface p-5">
+        <div className="rounded-lg border border-border bg-surface/60 p-4 sm:p-5">
           <div className="flex items-center gap-2">
             <AlertTriangle className="h-4 w-4 text-accent-light" />
             <p className="text-xs uppercase tracking-wide text-muted">Coastal alerts</p>

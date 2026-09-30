@@ -31,7 +31,7 @@ const config: Config = {
       },
       backgroundImage: {
         "radial-fade":
-          "radial-gradient(circle at 50% 0%, rgba(95,168,160,0.16), transparent 60%)",
+          "radial-gradient(ellipse at 50% 0%, rgba(95,168,160,0.08), transparent 55%)",
       },
       animation: {
         "fade-in": "fadeIn 0.6s ease-out forwards",

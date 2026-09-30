@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
-import { ParticleField } from "@/components/particle-field";
 import { CommandPalette } from "@/components/command-palette";
 import { BlogAnalytics } from "@/components/blog-analytics";
 import "./globals.css";
@@ -28,7 +27,7 @@ export const metadata: Metadata = {
     template: "%s — Low Tide Lab",
   },
   description:
-    "Tides, coastal conditions, and deep-sea life from Low Tide Lab's ocean intelligence dashboard.",
+    "Tide predictions, marine conditions, and coastal cameras from Low Tide Lab.",
   keywords: ["Low Tide Lab", "ocean", "tides", "deep sea", "marine life", "coastal conditions"],
   authors: [{ name: "Low Tide Lab" }],
   creator: "Low Tide Lab",
@@ -41,14 +40,14 @@ export const metadata: Metadata = {
     type: "website",
     url: siteUrl,
     title: "Low Tide Lab — Ocean Intelligence",
-    description: "Tides, coastal conditions, and deep-sea life from the Low Tide Lab submarine desk.",
+    description: "Tide predictions, marine conditions, and coastal cameras from Low Tide Lab.",
     siteName: "Low Tide Lab",
     images: [{ url: "/logo.png" }],
   },
   twitter: {
     card: "summary_large_image",
     title: "Low Tide Lab — Ocean Intelligence",
-    description: "Tides, coastal conditions, and deep-sea life from the Low Tide Lab submarine desk.",
+    description: "Tide predictions, marine conditions, and coastal cameras from Low Tide Lab.",
     images: ["/logo.png"],
   },
   robots: {
@@ -68,8 +67,6 @@ export default function RootLayout({
         className={`${inter.variable} ${jetbrainsMono.variable} relative min-h-screen bg-background font-sans`}
       >
         <div className="pointer-events-none fixed inset-0 -z-10 bg-radial-fade" />
-        <div className="pointer-events-none fixed inset-0 -z-10 bg-grid opacity-40 [mask-image:radial-gradient(ellipse_at_top,black,transparent_70%)]" />
-        <ParticleField />
         <BlogAnalytics />
         <CommandPalette />
         <Navbar />

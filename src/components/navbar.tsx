@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { clsx } from "clsx";
-import { Home, Map as MapIcon, Radio, ShoppingBag, Telescope, Video, Waves } from "lucide-react";
+import { Home, Map as MapIcon, Radio, Telescope, Video, Waves } from "lucide-react";
 import { CommandPaletteTrigger } from "@/components/command-palette";
 
 const links = [
@@ -14,7 +14,6 @@ const links = [
   { href: "/piers", label: "Piers", icon: Video },
   { href: "/map", label: "Map", icon: MapIcon },
   { href: "/coast", label: "Conditions", icon: Radio },
-  { href: "/shop", label: "Shop", icon: ShoppingBag },
   { href: "/treys-corner", label: "Trey's Corner", icon: Telescope },
 ];
 
@@ -33,7 +32,7 @@ export function Navbar() {
     <header
       className={clsx(
         "sticky top-0 z-50 w-full transition-colors duration-300",
-        scrolled ? "glass shadow-glow-sm" : "bg-transparent"
+        scrolled ? "border-b border-white/10 bg-background/90 backdrop-blur-md" : "border-b border-transparent bg-background/70"
       )}
     >
       <nav className="container-x flex h-16 items-center justify-between">
