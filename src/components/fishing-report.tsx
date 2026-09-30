@@ -262,7 +262,7 @@ export function FishingReport() {
                 <RefreshCw className={clsx("h-3.5 w-3.5", stockingLoading && "animate-spin")} />
               </button>
             </div>
-            <div role="meter" aria-label="Weeks since AZGFD's listed stocking week" aria-valuemin={0} aria-valuemax={10} aria-valuenow={stockingWeeksAgo === null ? 0 : Math.min(stockingWeeksAgo, 10)} aria-valuetext={lastStocking && stockingWeeksAgo !== null ? `${stockingWeeksAgo} weeks since the AZGFD listed stocking week` : "No matching stocking week listed"} className="mt-3 h-1.5 overflow-hidden rounded-full bg-white/10">
+            <div role="meter" aria-label="Weeks since AZGFD's listed stocking week" aria-valuemin={0} aria-valuemax={10} aria-valuenow={stockingWeeksAgo === null ? 0 : Math.min(stockingWeeksAgo, 10)} aria-valuetext={lastStocking && stockingWeeksAgo !== null ? `${stockingWeeksAgo} ${stockingWeeksAgo === 1 ? "week" : "weeks"} since the AZGFD listed stocking week` : "No matching stocking week listed"} className="mt-3 h-1.5 overflow-hidden rounded-full bg-white/10">
               <div className={clsx("h-full rounded-full transition-[width] duration-500", stockingWeeksAgo !== null && stockingWeeksAgo <= 2 ? "bg-primary-light" : stockingWeeksAgo !== null && stockingWeeksAgo <= 6 ? "bg-accent-light" : "bg-muted")} style={{ width: `${stockingAgePercent}%` }} />
             </div>
             <div className="mt-1.5 flex justify-between font-mono text-[9px] uppercase tracking-[0.12em] text-muted"><span>0 weeks</span><span>10+ weeks</span></div>
