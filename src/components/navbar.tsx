@@ -5,14 +5,14 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { clsx } from "clsx";
-import { Home, Map as MapIcon, Radio, Telescope, Video, Waves } from "lucide-react";
+import { Fish, Home, Radio, Telescope, Video, Waves } from "lucide-react";
 import { CommandPaletteTrigger } from "@/components/command-palette";
 
 const links = [
   { href: "/", label: "Home", icon: Home },
   { href: "/tides", label: "Tides", icon: Waves },
   { href: "/piers", label: "Piers", icon: Video },
-  { href: "/map", label: "Map", icon: MapIcon },
+  { href: "/fishing-report", label: "Fishing Report", icon: Fish },
   { href: "/coast", label: "Conditions", icon: Radio },
   { href: "/treys-corner", label: "Trey's Corner", icon: Telescope },
 ];

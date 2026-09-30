@@ -18,7 +18,7 @@ Open [http://localhost:3000](http://localhost:3000). The `predev` hook creates a
 - `/` — ocean dashboard with a saved home break, tide/marine conditions, and coastal watch.
 - `/tides` — NOAA predictions across three Southern California stations.
 - `/piers` — live coastal cameras with single-view and wall modes.
-- `/map` — pier cameras, NOAA tide stations, and active tropical systems on one chart.
+- `/fishing-report` — selected Northern Arizona waters, live local weather, target species, and trip links.
 - `/coast` — active NHC systems and current NWS alerts.
 - `/treys-corner` — international live cameras and an interactive AI timeline.
 - `/lab` — Abyssal Index with species habitat and depth notes.

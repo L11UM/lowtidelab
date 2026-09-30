@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import { Map as MapIcon } from "lucide-react";
 import { CoastChart } from "@/components/coast-chart";
 
@@ -8,6 +9,8 @@ export const metadata: Metadata = {
 };
 
 export default function MapPage() {
+  if (process.env.NEXT_PUBLIC_MAP_ENABLED !== "true") notFound();
+
   return (
     <section className="container-x py-10 sm:py-14">
       <header className="mb-6 border-b border-white/10 pb-6">

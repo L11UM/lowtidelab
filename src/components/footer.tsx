@@ -9,7 +9,7 @@ export function Footer() {
         <nav aria-label="Footer navigation" className="flex flex-wrap gap-x-5 gap-y-2 text-xs text-muted">
           <Link href="/tides" className="hover:text-white">Tides</Link>
           <Link href="/piers" className="hover:text-white">Piers</Link>
-          <Link href="/map" className="hover:text-white">Map</Link>
+          <Link href="/fishing-report" className="hover:text-white">Fishing Report</Link>
           <Link href="/coast" className="hover:text-white">Conditions</Link>
           <Link href="/treys-corner" className="hover:text-white">Trey&apos;s Corner</Link>
           <Link href="/about" className="hover:text-white">Mission</Link>
