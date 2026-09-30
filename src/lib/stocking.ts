@@ -102,6 +102,14 @@ function arizonaDate(now: Date) {
   return `${part("year")}-${part("month")}-${part("day")}`;
 }
 
+export function weeksSinceStockingWeek(weekOf: string, now = new Date()) {
+  const [stockYear, stockMonth, stockDay] = weekOf.split("-").map(Number);
+  const [todayYear, todayMonth, todayDay] = arizonaDate(now).split("-").map(Number);
+  const stockDayUtc = Date.UTC(stockYear, stockMonth - 1, stockDay);
+  const todayUtc = Date.UTC(todayYear, todayMonth - 1, todayDay);
+  return Math.max(0, Math.floor((todayUtc - stockDayUtc) / (7 * 24 * 60 * 60 * 1000)));
+}
+
 export function matchingStockingWeek(spot: FishingSpot, report: StockingReport, now = new Date()) {
   const names = [spot.name, ...(spot.stockingNames ?? [])].map(normalizeWaterName);
   return names

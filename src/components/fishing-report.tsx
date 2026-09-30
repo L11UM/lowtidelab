@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { clsx } from "clsx";
 import { ArrowUpRight, Cloud, CloudDrizzle, CloudFog, CloudLightning, CloudRain, Fish, LocateFixed, RefreshCw, Snowflake, Sun, ThermometerSun, Wind } from "lucide-react";
 import { defaultFishingSpot, fishingSpots, type FishingSpot } from "@/lib/fishing-spots";
-import { fetchStockingReport, matchingStockingWeek, type StockingReport } from "@/lib/stocking";
+import { fetchStockingReport, matchingStockingWeek, type StockingReport, weeksSinceStockingWeek } from "@/lib/stocking";
 
 type CurrentWeather = {
   time: string;
@@ -77,9 +77,7 @@ export function FishingReport() {
   const groupedSpots = useMemo(() => groupSpots(fishingSpots), []);
   const current = weather?.current;
   const lastStocking = stockingReport ? matchingStockingWeek(spot, stockingReport) : null;
-  const stockingWeeksAgo = lastStocking
-    ? Math.max(0, Math.floor((Date.now() - new Date(`${lastStocking.weekOf}T12:00:00`).getTime()) / (7 * 24 * 60 * 60 * 1000)))
-    : null;
+  const stockingWeeksAgo = lastStocking ? weeksSinceStockingWeek(lastStocking.weekOf) : null;
   const stockingAgePercent = stockingWeeksAgo === null ? 0 : Math.min(100, (stockingWeeksAgo / 10) * 100);
 
   useEffect(() => {
@@ -94,6 +92,7 @@ export function FishingReport() {
       daily: "weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max",
       temperature_unit: "fahrenheit",
       wind_speed_unit: "mph",
+      precipitation_unit: "inch",
       timezone: "America/Phoenix",
       forecast_days: "4",
     });
@@ -233,7 +232,7 @@ export function FishingReport() {
                 </div>
                 <div className="flex items-center justify-between gap-3 py-3">
                   <dt className="inline-flex items-center gap-2 text-xs text-muted"><CloudRain className="h-3.5 w-3.5" /> Precipitation</dt>
-                  <dd className="text-xs text-white">{current.precipitation} mm now</dd>
+                  <dd className="text-xs text-white">{current.precipitation < 0.01 ? "None now" : `${current.precipitation.toFixed(2)} in now`}</dd>
                 </div>
               </dl>
             </>
