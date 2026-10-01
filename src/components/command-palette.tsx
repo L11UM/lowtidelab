@@ -6,10 +6,9 @@ import { AnimatePresence, motion } from "framer-motion";
 import {
   Command,
   Home,
-  Waves,
-  Radio,
   Video,
   Fish,
+  Telescope,
   Mail,
   ArrowRight,
   Search,
@@ -40,13 +39,6 @@ export function CommandPalette() {
     () => [
       { id: "home", label: "Go to Home", icon: Home, action: () => router.push("/") },
       {
-        id: "tides",
-        label: "Open tide tables",
-        icon: Waves,
-        action: () => router.push("/tides"),
-        keywords: "station high low water level",
-      },
-      {
         id: "piers",
         label: "Open pier scope",
         icon: Video,
@@ -61,11 +53,11 @@ export function CommandPalette() {
         keywords: "fishing fish report lake trout bass Arizona stocking",
       },
       {
-        id: "conditions",
-        label: "Open coastal conditions",
-        icon: Radio,
-        action: () => router.push("/coast"),
-        keywords: "storms alerts weather",
+        id: "treys-corner",
+        label: "Open Trey’s Corner",
+        icon: Telescope,
+        action: () => router.push("/treys-corner"),
+        keywords: "world cameras AI timeline",
       },
       {
         id: "email",

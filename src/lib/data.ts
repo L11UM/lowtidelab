@@ -29,12 +29,12 @@ export const projects: Project[] = [
     featured: true,
   },
   {
-    slug: "coastal-conditions",
-    title: "Coastal Conditions",
+    slug: "northern-arizona-fishing-report",
+    title: "Northern Arizona Fishing Report",
     description:
-      "A live NOAA/NWS view of active tropical systems and coastal alerts, with the tide tracker still close at hand.",
-    tags: ["NOAA", "Storms", "Alerts"],
-    liveUrl: "/coast",
+      "A selected-water report with local weather, target species, AZGFD stocking weeks, and trip links.",
+    tags: ["Arizona", "Fishing", "Live data"],
+    liveUrl: "/fishing-report",
     featured: true,
   },
   {

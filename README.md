@@ -15,11 +15,9 @@ Open [http://localhost:3000](http://localhost:3000). The `predev` hook creates a
 
 ## Ocean instruments
 
-- `/` — ocean dashboard with a saved home break, tide/marine conditions, and coastal watch.
-- `/tides` — NOAA predictions across three Southern California stations.
+- `/` — crew desk with a saved home break and compact NOAA tide instrument.
 - `/piers` — live coastal cameras with single-view and wall modes.
 - `/fishing-report` — Northern Arizona waters with local weather, target species, AZGFD stocking-week recency, and trip links.
-- `/coast` — active NHC systems and current NWS alerts.
 - `/treys-corner` — international live cameras and an interactive AI timeline.
 - `/lab` — Abyssal Index with species habitat and depth notes.
 - `/about` — mission brief and data-source references.

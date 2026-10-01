@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { Reveal } from "@/components/reveal";
@@ -10,6 +11,8 @@ export const metadata: Metadata = {
 };
 
 export default function CoastPage() {
+  if (process.env.NEXT_PUBLIC_CONDITIONS_ENABLED !== "true") notFound();
+
   return (
     <>
       <section className="container-x pt-20 sm:pt-28">

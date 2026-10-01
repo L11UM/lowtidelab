@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import { Anchor, Clock3, Waves } from "lucide-react";
 import { TideTracker } from "@/components/tide-tracker";
 import { tideStations } from "@/lib/tides";
@@ -9,6 +10,8 @@ export const metadata: Metadata = {
 };
 
 export default function TidesPage() {
+  if (process.env.NEXT_PUBLIC_TIDE_PAGE_ENABLED !== "true") notFound();
+
   return (
     <section className="container-x py-10 sm:py-14">
       <header className="mb-8 flex flex-wrap items-end justify-between gap-5 border-b border-white/10 pb-6">
