@@ -5,10 +5,9 @@ import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   Command,
-  Home,
-  Video,
-  Fish,
-  Telescope,
+  ClipboardList,
+  Flame,
+  HeartPulse,
   Mail,
   ArrowRight,
   Search,
@@ -37,27 +36,27 @@ export function CommandPalette() {
 
   const items: PaletteItem[] = useMemo(
     () => [
-      { id: "home", label: "Go to Home", icon: Home, action: () => router.push("/") },
+      { id: "training", label: "Open training catalog", icon: ClipboardList, action: () => router.push("/#catalog"), keywords: "skills drills competencies practice training" },
       {
-        id: "piers",
-        label: "Open pier scope",
-        icon: Video,
-        action: () => router.push("/piers"),
-        keywords: "live cam webcam pier redondo video",
+        id: "ems",
+        label: "Jump to EMS skills",
+        icon: HeartPulse,
+        action: () => router.push("/#ems"),
+        keywords: "medical assessment airway trauma patient care ems",
       },
       {
-        id: "fishing-report",
-        label: "Open Northern Arizona fishing report",
-        icon: Fish,
-        action: () => router.push("/fishing-report"),
-        keywords: "fishing fish report lake trout bass Arizona stocking",
+        id: "fire",
+        label: "Jump to fire skills",
+        icon: Flame,
+        action: () => router.push("/#fire"),
+        keywords: "fireground hose scba search command wildland",
       },
       {
-        id: "treys-corner",
-        label: "Open Trey’s Corner",
-        icon: Telescope,
-        action: () => router.push("/treys-corner"),
-        keywords: "world cameras AI timeline",
+        id: "shared",
+        label: "Jump to shared crew skills",
+        icon: ClipboardList,
+        action: () => router.push("/#shared"),
+        keywords: "radio teamwork safety rehab decontamination",
       },
       {
         id: "email",
@@ -140,7 +139,7 @@ export function CommandPalette() {
                 autoFocus
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search pages, actions…"
+                placeholder="Search training, skills, actions…"
                 className="w-full bg-transparent text-sm text-white placeholder:text-muted focus:outline-none"
               />
               <kbd className="shrink-0 rounded border border-white/10 bg-white/5 px-1.5 py-0.5 text-[10px] text-muted">

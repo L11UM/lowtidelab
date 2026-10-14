@@ -5,19 +5,19 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { clsx } from "clsx";
-import { Fish, Home, Telescope, Video } from "lucide-react";
+import { ClipboardList, Flame, HeartPulse } from "lucide-react";
 import { CommandPaletteTrigger } from "@/components/command-palette";
 
 const links = [
-  { href: "/", label: "Home", icon: Home },
-  { href: "/fishing-report", label: "Fishing Report", icon: Fish },
-  { href: "/piers", label: "Piers", icon: Video },
-  { href: "/treys-corner", label: "Trey's Corner", icon: Telescope },
+  { href: "/#catalog", label: "Training", icon: ClipboardList },
+  { href: "/#ems", label: "EMS", icon: HeartPulse },
+  { href: "/#fire", label: "Fire", icon: Flame },
 ];
 
 export function Navbar() {
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
+  const [activeSection, setActiveSection] = useState("catalog");
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -25,6 +25,16 @@ export function Navbar() {
     window.addEventListener("scroll", onScroll);
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  useEffect(() => {
+    if (pathname !== "/") return;
+    const observer = new IntersectionObserver((entries) => {
+      const visible = entries.filter((entry) => entry.isIntersecting).sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+      if (visible) setActiveSection(visible.target.id);
+    }, { rootMargin: "-20% 0px -65% 0px", threshold: [0, 0.2, 0.5] });
+    document.querySelectorAll("#catalog, #ems, #fire, #shared").forEach((section) => observer.observe(section));
+    return () => observer.disconnect();
+  }, [pathname]);
 
   return (
     <header
@@ -46,8 +56,8 @@ export function Navbar() {
           <ul className="flex items-center gap-1 sm:gap-2">
           {links.map((link) => {
             const Icon = link.icon;
-            const active =
-              link.href === "/" ? pathname === "/" : pathname?.startsWith(link.href);
+            const section = link.href.split("#")[1];
+            const active = pathname === "/" && section === activeSection;
             return (
               <li key={link.href} className="relative">
                 <Link

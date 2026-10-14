@@ -9,6 +9,8 @@
 
   body {
     @apply bg-background text-white antialiased;
+    background-image: radial-gradient(circle at top, rgba(143, 201, 193, 0.16), transparent 28%),
+      linear-gradient(180deg, rgba(9, 12, 15, 1), rgba(7, 8, 11, 1));
   }
 
   ::selection {

@@ -23,12 +23,12 @@ const siteUrl = "https://lowtidelab.dev";
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "Low Tide Lab — Ocean Intelligence",
+    default: "Low Tide Lab — EMS & Fire Training",
     template: "%s — Low Tide Lab",
   },
   description:
-    "Tide predictions, marine conditions, and coastal cameras from Low Tide Lab.",
-  keywords: ["Low Tide Lab", "ocean", "tides", "deep sea", "marine life", "coastal conditions"],
+    "A practical EMS and fire training hub for crew skill drills, practice tracking, and competency development.",
+  keywords: ["Low Tide Lab", "EMS training", "firefighter training", "skills practice", "crew training"],
   authors: [{ name: "Low Tide Lab" }],
   creator: "Low Tide Lab",
   icons: {
@@ -39,15 +39,15 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     url: siteUrl,
-    title: "Low Tide Lab — Ocean Intelligence",
-    description: "Tide predictions, marine conditions, and coastal cameras from Low Tide Lab.",
+    title: "Low Tide Lab — EMS & Fire Training",
+    description: "A practical EMS and fire training hub for crew skill drills, practice tracking, and competency development.",
     siteName: "Low Tide Lab",
     images: [{ url: "/logo.png" }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Low Tide Lab — Ocean Intelligence",
-    description: "Tide predictions, marine conditions, and coastal cameras from Low Tide Lab.",
+    title: "Low Tide Lab — EMS & Fire Training",
+    description: "A practical EMS and fire training hub for crew skill drills, practice tracking, and competency development.",
     images: ["/logo.png"],
   },
   robots: {
